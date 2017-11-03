@@ -1,0 +1,32 @@
+-- 
+
+-- 
+DROP TABLE IF EXISTS nmeaFiles;
+CREATE TABLE nmeaFiles (
+	FileID integer primary key autoincrement,
+	FileName text not null,
+	FileCheck text,
+	FileTsWrite timestamp,
+	FileTsImport timestamp
+);
+
+-- 
+DROP TABLE IF EXISTS nmeaValues;
+CREATE TABLE nmeaValues (
+	FileID integer NOT NULL,
+	FileLineNum integer NOT NULL,
+	NmeaID text,
+	NmeaVal text
+);
+
+-- 
+DROP TABLE IF EXISTS nmeaTraces;
+CREATE TABLE nmeaTraces (
+	FileId integer NOT NULL,
+	TraceName text NOT NULL,
+	LineStart integer,
+	LineStop integer,
+	TraceInfo text
+);
+
+-- 
