@@ -20,20 +20,12 @@
 del %nmeaDB%
 %dbbin% %nmeaDB% < nmeaDb_CreateTablesAndInsert.sql.txt
 
-set nmeaFile=%homeDir%\datas\VHF_20151215.nmea
-touch -m -t 201512151347.01 %nmeaFile%
-%pythonHome%\python.exe nmeaImportNmeaFile.py  %nmeaFile% %nmeaDB%
-
-set nmeaFile=%homeDir%\datas\Sortie_20170922-01.nmea
-touch -m -t 201709221204.30 %nmeaFile%
-%pythonHome%\python.exe nmeaImportNmeaFile.py  %nmeaFile% %nmeaDB%
-
-set nmeaFile=%homeDir%\datas\Sortie_20170922-02.nmea
-touch -m -t 201709221625.20 %nmeaFile%
-%pythonHome%\python.exe nmeaImportNmeaFile.py  %nmeaFile% %nmeaDB%
-
 set nmeaFile=%homeDir%\datas\AISSinagot.nmea
 touch -m -t 201709090909.09 %nmeaFile%
+%pythonHome%\python.exe nmeaImportNmeaFile.py  %nmeaFile% %nmeaDB%
+
+set nmeaFile=%homeDir%\datas\Calibration01.nmea
+touch -m -t 201710261510.34 %nmeaFile%
 %pythonHome%\python.exe nmeaImportNmeaFile.py  %nmeaFile% %nmeaDB%
 
 set nmeaFile=%homeDir%\datas\Garmin152h.nmea
@@ -44,6 +36,42 @@ set nmeaFile=%homeDir%\datas\NkeLauBen.nmea
 touch -m -t 201709202140.20 %nmeaFile%
 %pythonHome%\python.exe nmeaImportNmeaFile.py  %nmeaFile% %nmeaDB%
 
-set nmeaFile=%homeDir%\datas\Calibration01.nmea
-touch -m -t 201710261510.34 %nmeaFile%
+set nmeaFile=%homeDir%\datas\VHF_20151215.nmea
+touch -m -t 201512151347.01 %nmeaFile%
+%pythonHome%\python.exe nmeaImportNmeaFile.py  %nmeaFile% %nmeaDB%
+
+set nmeaFile=%homeDir%\datas\opcn-20170911-082000.nmea
+touch -m -t 201709110820.00 %nmeaFile%
+%pythonHome%\python.exe nmeaImportNmeaFile.py  %nmeaFile% %nmeaDB%
+
+set nmeaFile=%homeDir%\datas\opcn-20170911-164500.nmea
+touch -m -t 201709111645.00 %nmeaFile%
+%pythonHome%\python.exe nmeaImportNmeaFile.py  %nmeaFile% %nmeaDB%
+
+set nmeaFile=%homeDir%\datas\opcn-20170912-081000.nmea
+touch -m -t 201709120810.00 %nmeaFile%
+%pythonHome%\python.exe nmeaImportNmeaFile.py  %nmeaFile% %nmeaDB%
+
+set nmeaFile=%homeDir%\datas\opcn-20170912-184500.nmea
+touch -m -t 201709121845.00 %nmeaFile%
+%pythonHome%\python.exe nmeaImportNmeaFile.py  %nmeaFile% %nmeaDB%
+
+set nmeaFile=%homeDir%\datas\opcn-20170913-081500.nmea
+touch -m -t 201709130815.00 %nmeaFile%
+%pythonHome%\python.exe nmeaImportNmeaFile.py  %nmeaFile% %nmeaDB%
+
+set nmeaFile=%homeDir%\datas\opcn-20170913-163000.nmea
+touch -m -t 201709131630.00 %nmeaFile%
+%pythonHome%\python.exe nmeaImportNmeaFile.py  %nmeaFile% %nmeaDB%
+
+set nmeaFile=%homeDir%\datas\Sortie_20170922-01.nmea
+touch -m -t 201709221204.30 %nmeaFile%
+%pythonHome%\python.exe nmeaImportNmeaFile.py  %nmeaFile% %nmeaDB%
+
+set nmeaFile=%homeDir%\datas\Sortie_20170922-02.nmea
+touch -m -t 201709221625.20 %nmeaFile%
+%pythonHome%\python.exe nmeaImportNmeaFile.py  %nmeaFile% %nmeaDB%
+
+set nmeaFile=%homeDir%\datas\VHF_20151215.nmea
+touch -m -t 201512151347.01 %nmeaFile%
 %pythonHome%\python.exe nmeaImportNmeaFile.py  %nmeaFile% %nmeaDB%
