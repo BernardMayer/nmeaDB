@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<gpx version="1.1" creator="OpenCPN" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" xmlns:opencpn="http://www.opencpn.org">
+  <trk>
+    <name>Maison-Boulot-GpsJaune</name>
+    <extensions>
+      <opencpn:guid>3e8ce88a-0b58-434a-a58f-1eb54b59ad81</opencpn:guid>
+      <opencpn:viz>1</opencpn:viz>
+    </extensions>
+    <trkseg>
+      <trkpt lat="47.238546667" lon="-1.525678333">
+        <time>2017-09-12T06:09:20Z</time>
+      </trkpt>
+      <trkpt lat="47.238011667" lon="-1.526103333">
+        <time>2017-09-12T06:11:03Z</time>
+      </trkpt>
+      <trkpt lat="47.240610000" lon="-1.530083333">
+        <time>2017-09-12T06:12:07Z</time>
+      </trkpt>
+      <trkpt lat="47.252106667" lon="-1.517050000">
+        <time>2017-09-12T06:16:31Z</time>
+      </trkpt>
+      <trkpt lat="47.255103333" lon="-1.512038333">
+        <time>2017-09-12T06:17:35Z</time>
+      </trkpt>
+      <trkpt lat="47.255843333" lon="-1.509305000">
+        <time>2017-09-12T06:17:59Z</time>
+      </trkpt>
+      <trkpt lat="47.255513333" lon="-1.508973333">
+        <time>2017-09-12T06:18:07Z</time>
+      </trkpt>
+      <trkpt lat="47.254713333" lon="-1.509888333">
+        <time>2017-09-12T06:18:31Z</time>
+      </trkpt>
+      <trkpt lat="47.254445000" lon="-1.509546667">
+        <time>2017-09-12T06:18:39Z</time>
+      </trkpt>
+      <trkpt lat="47.254400000" lon="-1.509040000">
+        <time>2017-09-12T06:20:47Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>

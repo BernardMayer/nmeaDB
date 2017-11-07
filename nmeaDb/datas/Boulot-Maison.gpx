@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<gpx version="1.1" creator="OpenCPN" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" xmlns:opencpn="http://www.opencpn.org">
+  <trk>
+    <name>Boulot-Maison</name>
+    <extensions>
+      <opencpn:guid>3dcc781d-8140-4fa4-8992-533c3a427aff</opencpn:guid>
+      <opencpn:viz>1</opencpn:viz>
+    </extensions>
+    <trkseg>
+      <trkpt lat="47.254420000" lon="-1.509256667">
+        <time>2017-09-11T14:46:41Z</time>
+      </trkpt>
+      <trkpt lat="47.254751667" lon="-1.508780000">
+        <time>2017-09-11T14:48:14Z</time>
+      </trkpt>
+      <trkpt lat="47.255083333" lon="-1.509180000">
+        <time>2017-09-11T14:48:22Z</time>
+      </trkpt>
+      <trkpt lat="47.255498333" lon="-1.508786667">
+        <time>2017-09-11T14:48:38Z</time>
+      </trkpt>
+      <trkpt lat="47.253986667" lon="-1.506760000">
+        <time>2017-09-11T14:49:02Z</time>
+      </trkpt>
+      <trkpt lat="47.251405000" lon="-1.504381667">
+        <time>2017-09-11T14:49:26Z</time>
+      </trkpt>
+      <trkpt lat="47.250383333" lon="-1.503831667">
+        <time>2017-09-11T14:49:34Z</time>
+      </trkpt>
+      <trkpt lat="47.249761667" lon="-1.502811667">
+        <time>2017-09-11T14:49:42Z</time>
+      </trkpt>
+      <trkpt lat="47.251085000" lon="-1.498490000">
+        <time>2017-09-11T14:50:14Z</time>
+      </trkpt>
+      <trkpt lat="47.250271667" lon="-1.497735000">
+        <time>2017-09-11T14:50:30Z</time>
+      </trkpt>
+      <trkpt lat="47.248405000" lon="-1.502610000">
+        <time>2017-09-11T14:51:10Z</time>
+      </trkpt>
+      <trkpt lat="47.245193333" lon="-1.506455000">
+        <time>2017-09-11T14:52:07Z</time>
+      </trkpt>
+      <trkpt lat="47.245398333" lon="-1.508060000">
+        <time>2017-09-11T14:52:31Z</time>
+      </trkpt>
+      <trkpt lat="47.244875000" lon="-1.509978333">
+        <time>2017-09-11T14:52:55Z</time>
+      </trkpt>
+      <trkpt lat="47.245731667" lon="-1.510845000">
+        <time>2017-09-11T14:53:11Z</time>
+      </trkpt>
+      <trkpt lat="47.246051667" lon="-1.514616667">
+        <time>2017-09-11T14:53:43Z</time>
+      </trkpt>
+      <trkpt lat="47.245950000" lon="-1.515253333">
+        <time>2017-09-11T14:53:51Z</time>
+      </trkpt>
+      <trkpt lat="47.245316667" lon="-1.515361667">
+        <time>2017-09-11T14:54:07Z</time>
+      </trkpt>
+      <trkpt lat="47.243100000" lon="-1.518035000">
+        <time>2017-09-11T14:55:03Z</time>
+      </trkpt>
+      <trkpt lat="47.241571667" lon="-1.517483333">
+        <time>2017-09-11T14:55:27Z</time>
+      </trkpt>
+      <trkpt lat="47.240856667" lon="-1.517646667">
+        <time>2017-09-11T14:55:35Z</time>
+      </trkpt>
+      <trkpt lat="47.239738333" lon="-1.518896667">
+        <time>2017-09-11T14:55:59Z</time>
+      </trkpt>
+      <trkpt lat="47.238281667" lon="-1.521325000">
+        <time>2017-09-11T14:56:23Z</time>
+      </trkpt>
+      <trkpt lat="47.237498333" lon="-1.524745000">
+        <time>2017-09-11T14:56:55Z</time>
+      </trkpt>
+      <trkpt lat="47.237946667" lon="-1.525911667">
+        <time>2017-09-11T14:57:11Z</time>
+      </trkpt>
+      <trkpt lat="47.238150000" lon="-1.526088333">
+        <time>2017-09-11T14:57:19Z</time>
+      </trkpt>
+      <trkpt lat="47.238665000" lon="-1.525876667">
+        <time>2017-09-11T14:57:35Z</time>
+      </trkpt>
+      <trkpt lat="47.238711667" lon="-1.525583333">
+        <time>2017-09-11T14:58:55Z</time>
+      </trkpt>
+      <trkpt lat="47.254701667" lon="-1.508786667">
+        <time>2017-09-11T14:59:19Z</time>
+      </trkpt>
+      <trkpt lat="47.246088333" lon="-1.514363333">
+        <time>2017-09-11T14:59:27Z</time>
+      </trkpt>
+      <trkpt lat="47.238740000" lon="-1.525561667">
+        <time>2017-09-11T15:00:03Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>

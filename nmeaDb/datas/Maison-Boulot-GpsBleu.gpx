@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<gpx version="1.1" creator="OpenCPN" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" xmlns:opencpn="http://www.opencpn.org">
+  <trk>
+    <name>Maison-Boulot-GpsBleu</name>
+    <extensions>
+      <opencpn:guid>585e158f-b7cc-4156-841c-e2e9250deac0</opencpn:guid>
+      <opencpn:viz>0</opencpn:viz>
+    </extensions>
+    <trkseg>
+      <trkpt lat="47.238705000" lon="-1.525600000">
+        <time>2017-09-13T06:12:12Z</time>
+      </trkpt>
+      <trkpt lat="47.238830000" lon="-1.525676667">
+        <time>2017-09-13T06:13:57Z</time>
+      </trkpt>
+      <trkpt lat="47.238236667" lon="-1.526175000">
+        <time>2017-09-13T06:14:29Z</time>
+      </trkpt>
+      <trkpt lat="47.240768333" lon="-1.530083333">
+        <time>2017-09-13T06:15:33Z</time>
+      </trkpt>
+      <trkpt lat="47.251166667" lon="-1.518255000">
+        <time>2017-09-13T06:20:53Z</time>
+      </trkpt>
+      <trkpt lat="47.252570000" lon="-1.516348333">
+        <time>2017-09-13T06:21:09Z</time>
+      </trkpt>
+      <trkpt lat="47.255051667" lon="-1.511980000">
+        <time>2017-09-13T06:22:13Z</time>
+      </trkpt>
+      <trkpt lat="47.255713333" lon="-1.510053333">
+        <time>2017-09-13T06:22:29Z</time>
+      </trkpt>
+      <trkpt lat="47.255833333" lon="-1.509256667">
+        <time>2017-09-13T06:22:37Z</time>
+      </trkpt>
+      <trkpt lat="47.255545000" lon="-1.508918333">
+        <time>2017-09-13T06:22:45Z</time>
+      </trkpt>
+      <trkpt lat="47.254743333" lon="-1.509841667">
+        <time>2017-09-13T06:23:09Z</time>
+      </trkpt>
+      <trkpt lat="47.254323333" lon="-1.509246667">
+        <time>2017-09-13T06:23:25Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>
