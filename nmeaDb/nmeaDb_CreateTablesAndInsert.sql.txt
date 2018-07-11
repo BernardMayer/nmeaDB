@@ -33,13 +33,14 @@ CREATE TABLE nmeaTraces (
 DROP TABLE IF EXISTS nmeaSentencesTypes;
 CREATE TABLE nmeaSentencesTypes (
 	TypeID integer PRIMARY KEY AUTOINCREMENT,
-	TypeShortLabel text NOT NULL,
 	SentenceID char(3) NOT NULL,
-	TypeLongLabel text,
+	TypeShortLabel text NOT NULL,
+	TypeLongLabel text
 );
 INSERT INTO nmeaSentencesTypes(SentenceID, TypeShortLabel, TypeLongLabel)
+VALUES
 ('ZDA', 'Temps', 'Indication horaire'),
-('RMC', 'Temps', 'Indication horaire')
+('RMC', 'Temps', 'Indication horaire'),
 ('HCC', 'Cap', 'Orientation'), 
 ('HCD', 'Cap', 'Orientation'), 
 ('HDG', 'Cap', 'Orientation'), 
