@@ -306,6 +306,7 @@ VALUES
 ('PGRME', 'Garmin Estimated Error', '', 'Garmin', ''), 
 ('PMGNST', 'Magellan Status', '', 'Magellan', ''), 
 ('PRWIZCH', 'Rockwell Channel Status', '', '', ''), 
+('PSRT', '01', 'AIS service message', 'SRT', ''), 
 ('PUBX', '00', 'u-blox Lat/Long Position Data', '', ''), 
 ('PUBX', '01', 'u-blox UTM Position Data', '', ''), 
 ('PUBX', '03', 'u-blox Satellite Status', '', ''), 
