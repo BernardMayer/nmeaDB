@@ -78,7 +78,6 @@ VALUES
 ('II', 'Integrated Instrumentation'), 
 ('IN', 'Integrated Navigation'), 
 ('EC', 'Electronic Chart Display & Information System (ECDIS)'), 
--- ('CD', 'Digital Selective Calling (DSC)'), 
 ('GA', 'Galileo Positioning System'), 
 ('GL', 'GLONASS, according to IEIC 61162-1'), 
 ('GN', 'Mixed GPS and GLONASS data, according to IEIC 61162-1'), 
@@ -101,17 +100,12 @@ VALUES
 ('DE', 'DECCA Navigation (obsolete)'), 
 ('DF', 'Direction Finder'), 
 ('DU', 'Duplex repeater station'), 
--- ('EC', 'Electronic Chart Display & Information System (ECDIS)'), 
 ('EP', 'Emergency Position Indicating Beacon (EPIRB)'), 
 ('ER', 'Engine Room Monitoring Systems'), 
--- ('GP', 'Global Positioning System (GPS)'), 
 ('HC', 'Heading - Magnetic Compass'), 
 ('HE', 'Heading - North Seeking Gyro'), 
 ('HN', 'Heading - Non North Seeking Gyro'), 
--- ('II', 'Integrated Instrumentation'), 
--- ('IN', 'Integrated Navigation'), 
 ('LA', 'Loran A (obsolete)'), 
--- ('LC', 'Loran C (obsolete)'), 
 ('MP', 'Microwave Positioning System (obsolete)'), 
 ('NL', 'Navigation light controller'), 
 ('OM', 'OMEGA Navigation System (obsolete)'), 
@@ -122,7 +116,6 @@ VALUES
 ('SS', 'Sounder, Scanning'), 
 ('TI', 'Turn Rate Indicator'), 
 ('TR', 'TRANSIT Navigation System'), 
--- ('U#', '# is a digit 0 … 9; User Configured'), 
 ('U0', '# is a digit 0 … 9; User Configured'), 
 ('U1', '# is a digit 0 … 9; User Configured'), 
 ('U2', '# is a digit 0 … 9; User Configured'), 
@@ -324,4 +317,7 @@ VALUES
 ('PNKEP', '04', 'angle optimal vent, rendement au pres, rendement polaire', 'NKE', ''), 
 ('PNKEP', '05', 'ANGLE_OPT_CMG, GAIN_ROUTE_CMG, ANGLE_OPT_VMG, GAIN_ROUTE_VMG', 'NKE', ''), 
 ('PNKEA', '', '', 'NKE', '')
+;
+
+VACUUM
 ;
