@@ -62,7 +62,8 @@ VALUES
 ('MWD', 'Vent', 'Vent'),
 ('MWH', 'Vent', 'Vent'),
 ('MWS', 'Vent', 'Vent'),
-('MWV', 'Vent', 'Vent')
+('MWV', 'Vent', 'Vent'),
+('VWR', 'Vent', 'Vent')
 ;
 -- http://freenmea.net/docs
 DROP TABLE IF EXISTS nmeaTalkers;
@@ -84,6 +85,7 @@ VALUES
 ('GB', 'BeiDou (China)'), 
 ('BD', 'BeiDou (China)'), 
 ('QZ', 'QZSS regional GPS augmentation system (Japan)'), 
+('AI', 'AIS'), 
 ('AB', 'Independent AIS Base Station'), 
 ('AD', 'Dependent AIS Base Station'), 
 ('AG', 'Autopilot - General'), 
@@ -166,6 +168,7 @@ VALUES
 ('AKD', 'Acknowledge Detail Alarm Condition', '?'), 
 ('ALA', 'Set Detail Alarm Condition', '?'), 
 ('ALM', 'GPS Almanac Data', ''), 
+('ALR', 'Alarm (AIS ?)', ''), 
 ('APA', 'Autopilot Sentence "A"', '2009'), 
 ('APB', 'Autopilot Sentence "B"', ''), 
 ('ASD', 'Autopilot System Data', '?'), 
@@ -271,6 +274,7 @@ VALUES
 ('TPT', 'Trawl Position True', ''), 
 ('TRF', 'TRANSIT Fix Data', ''), 
 ('TTM', 'Tracked Target Message', ''), 
+('TXT', 'Texte', ''), 
 ('VBW', 'Dual Ground/Water Speed', ''), 
 ('VDR', 'Set and Drift', ''), 
 ('VHW', 'Water speed and heading', ''), 
@@ -278,6 +282,7 @@ VALUES
 ('VPW', 'Speed - Measured Parallel to Wind', ''), 
 ('VTG', 'Track made good and Ground speed', ''), 
 ('VWR', 'Relative Wind Speed and Angle', ''), 
+('VWT', 'True Windspeed and Angle (obsolete)', ''), 
 ('WCV', 'Waypoint Closure Velocity', ''), 
 ('WDC', 'Distance to Waypoint - Great Circle', '?'), 
 ('WDR', 'Distance to Waypoint - Rhumb Line', '?'), 
