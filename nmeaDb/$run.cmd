@@ -6,19 +6,33 @@
 
 @set TAB=\t
 
-@set homeDir=D:\_perso\bateau\TaC\nmeaDb
-@set homePosix=D:\myTools\GOW
-@set pythonHome=D:\myTools\Python\Python36
-@set dbBin=D:\myTools\sqlite\sqlite3.exe
+@REM @set homeDir=D:\_perso\bateau\TaC\nmeaDb
+@REM @set dataDir=C:\RepoGit\Bateau\TaC\Terminal
+@REM @set homePosix=D:\myTools\GOW
+@REM @set pythonHome=D:\myTools\Python\Python36
+@REM @set dbBin=D:\myTools\sqlite\sqlite3.exe
+
+@set homeDir=C:\RepoGit\nmeaDB\nmeaDb
+@set dataDir=C:\RepoGit\Bateau\TaC\Terminal
+@set homePosix=C:\CAT_dskD\myTools\GOW
+@set pythonHome=C:\CAT_dskD\myTools\Python\Python36
+@set dbBin=C:\CAT_dskD\myTools\sqlite\sqlite3.exe
 
 @rem Quels sont les differents talkers ?
 @rem %pythonHome%\python.exe nmeaTalkers.py %nmeaFile%
 
 @set nmeaDB=nmeaDb.sqlite
 
-
 del %nmeaDB%
 %dbbin% %nmeaDB% < nmeaDb_CreateTablesAndInsert.sql.txt
+%homePosix%\sleep 1
+
+set nmeaFile=%dataDir%\Nav_20180608.nmea
+%homePosix%\touch -m -t 201806080808.08 %nmeaFile%
+%pythonHome%\python.exe nmeaImportNmeaFile.py  %nmeaFile% %nmeaDB%
+
+echo "--- fin import %nmeaFile% ---"
+pause
 
 set nmeaFile=%homeDir%\datas\AISSinagot.nmea
 touch -m -t 201709090909.09 %nmeaFile%

@@ -15,6 +15,11 @@ DROP TABLE IF EXISTS nmeaValues;
 CREATE TABLE nmeaValues (
 	FileID integer NOT NULL,
 	FileLineNum integer NOT NULL,
+	lat decimal,
+	lon decimal,
+	latlon text,
+	ts bigint,
+	dt timestamp(0),
 	NmeaID text,
 	NmeaVal text
 );
