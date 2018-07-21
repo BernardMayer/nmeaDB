@@ -123,7 +123,7 @@ def getXydtFromInstruments(id, val) :
         #print(val, ' --> ', retXY)
         ##  N --> ?    S --> ?    W --> ?    E --> ?
         retX = gll[0]
-        if (gll[1] == 'N') :
+        if (gll[1] == 'S') :
             retX = '-' + gll[0]
         retY = gll[2]
         if (gll[3] == 'W') :
