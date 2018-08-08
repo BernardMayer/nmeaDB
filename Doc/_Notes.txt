@@ -1,0 +1,37 @@
+1 seconde d'arc : 31m a l'equateur 0.000277°
+1 minute d'arc : 1852m soit 1 nm (10 encablures) 0.0166°
+1° 111.3 km
+N et E sont positifs, S et W sont négatifs
+0° 0' 0.01" --> 0.0000028
+0° 0' 1" --> 0.0002778
+DD = d + (min/60) + (sec/3600)
+    <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+    <gpx xmlns="http://www.topografix.com/GPX/1/1" creator="byHand" version="1.1" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+     
+      <wpt lat="39.921055008" lon="3.054223107">
+        <ele>12.863281</ele>
+        <time>2005-05-16T11:49:06Z</time>
+        <name>Cala Sant Vicenç - Mallorca</name>
+        <sym>City</sym>
+      </wpt>
+    </gpx>
+
+Degrés, minutes et secondes (DMS) : 41°24'12.2" N 2°10'26.5" E
+Degrés et minutes décimales (DMM) : 41 24.2028, 2 10.4418
+Degrés décimaux (DD) : 41.40338, 2.17403
+La latitude doit etre indiquee avant la longitude.
+Assurez-vous que le premier nombre indique en tant que latitude se situe entre -90 et 90.
+Assurez-vous que le premier nombre indique en tant que longitude se situe entre -180 et 180.
+https://www.directionsmag.com/site/latlong-converter/
+DMS 0 0 1
+DM.m 0 0.016666666666667
+D.d 0.00027777777777778
+The formulas are as follows:
+Degrees Minutes Seconds to Degrees Minutes.m
+Degrees = Degrees
+Minutes.m = Minutes + (Seconds / 60)
+Degrees Minutes.m to Decimal Degrees
+.d = M.m / 60
+Decimal Degrees = Degrees + .d
