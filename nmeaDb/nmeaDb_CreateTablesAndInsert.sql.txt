@@ -19,6 +19,7 @@ CREATE TABLE nmeaValues (
 	lon decimal,
 	latlon text,
 	ts bigint,
+	tsEpoch bigint,
 	dt timestamp(0),
 	NmeaID text,
 	NmeaVal text
