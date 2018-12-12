@@ -3,6 +3,9 @@
 
 ### http://sametmax.com/lencoding-en-python-une-bonne-fois-pour-toute/
 from __future__ import unicode_literals
+### https://www.systutorials.com/241727/how-to-print-a-line-to-stderr-and-stdout-in-python/
+# Permet en python 2.7 print("your message", file=sys.stderr) comme en Python 3
+from __future__ import print_function
 
 """
 Importer les phrases NMEA 0183 dans la base de donnees
@@ -37,6 +40,7 @@ Verbose = True
 #dIni['verbose'] = Verbose
 dtNow  = datetime.datetime.today()
 tsNow = dtNow.timestamp()
+epoch = datetime.datetime(1970, 1, 1)
 
 
 #bShowIdentifier = os.getenv("dsXidentifier", False)
@@ -45,17 +49,17 @@ tsNow = dtNow.timestamp()
 me = sys.argv[0]
 #args = sys.argv[1:]
 if (len(sys.argv) != 3) :
-    print(me + " : Pas le bon nombre de parametres.")
-    print("Usage : " + me + " <Chemin et nom du fichier NMEA> <Chemin et nom de la base Sqlite>")
+    print(me + " : Pas le bon nombre de parametres.", file=sys.stderr)
+    print("Usage : " + me + " <Chemin et nom du fichier NMEA> <Chemin et nom de la base Sqlite>", file=sys.stderr)
     quit()
 else :
     nmeaFilename = sys.argv[1]
     nmeaDbname = sys.argv[2]
-    print("I;Import du fichier NMEA [" + nmeaFilename + "] dans la base Sqlite [" + nmeaDbname + "]")
+    print("I;Import du fichier NMEA [" + nmeaFilename + "] dans la base Sqlite [" + nmeaDbname + "]", file=sys.stderr)
 
 ## Tests prealables, fichier NMEA puis DB
 if (not os.path.exists(nmeaFilename)) :
-    print("E:Fichier", nmeaFilename, "introuvable")
+    print("E:Fichier", nmeaFilename, "introuvable", file=sys.stderr)
     quit()
 
 ## TS ISO8601 epoch
@@ -120,25 +124,40 @@ $--RMC,hhmmss.ss,A,llll.ll,a,yyyyy.yy,a,x.x,x.x,xxxx,x.x,a*hh
 $GPRMC	055827.000,A,4715,0596,N,131,7996,W,23,3,356,0,261115,,,N*43
 $GPRMC	055927.000,A,4715,3027,N,131,7799,W,13,6,5,0,261115,,,N*4C
 
-$IIZDA,hhmmss.ss,xx,xx,xxxx,,*hh 
-I I I I_Année
-I I I_Mois
-I I_jour
-I_Heure
+$IIZDA,hhmmss.ss,xx,xx,xxxx,,*hh
+       I         I  I  I_Année
+       I         I  I_Mois
+       I         I_jour
+       I_Heure
 $IIZDA	194020,20,09,2017,,*5E
 $IIZDA	152520,07,07,2017,,*5A
-
 """
-lCandidats = ('RMC', 'ZDA')
+
+lCandidats = list()
 ddCandidats = dict()
 ddCandidats['RMC'] = dict()
-ddCandidats['ZDA'] = dict()
 ddCandidats['RMC']['nbrL'] = 0
 ddCandidats['RMC']['lPremiere'] = 0
 ddCandidats['RMC']['lDerniere'] = 0
+ddCandidats['RMC']['sPremiere'] = ""
+ddCandidats['RMC']['sDerniere'] = ""
+ddCandidats['RMC']['dtPremiere'] = ""
+ddCandidats['RMC']['dtDerniere'] = ""
+ddCandidats['RMC']['duree'] = 0
+ddCandidats['RMC']['intervalle'] = 0.0
+ddCandidats['ZDA'] = dict()
 ddCandidats['ZDA']['nbrL'] = 0
 ddCandidats['ZDA']['lPremiere'] = 0
 ddCandidats['ZDA']['lDerniere'] = 0
+ddCandidats['ZDA']['sPremiere'] = ""
+ddCandidats['ZDA']['sDerniere'] = ""
+ddCandidats['ZDA']['dtPremiere'] = ""
+ddCandidats['ZDA']['dtDerniere'] = ""
+ddCandidats['ZDA']['duree'] = 0
+ddCandidats['ZDA']['intervalle'] = 0.0
+
+for candidat, dCandidats in ddCandidats.items() :
+    lCandidats.append(candidat)
 
 with open(nmeaFilename, 'r') as fNmea :
     nLineCandidatFirst = nLineCandidtaLast = nLine = 0
@@ -155,11 +174,58 @@ with open(nmeaFilename, 'r') as fNmea :
             if (candidat in lCandidats) : 
                 ddCandidats[candidat]['nbrL'] = ddCandidats[candidat]['nbrL'] + 1
                 ddCandidats[candidat]['lDerniere'] = nLine
+                ddCandidats[candidat]['sDerniere'] = line
                 if (ddCandidats[candidat]['lPremiere']) == 0 :
                     ddCandidats[candidat]['lPremiere'] = nLine
-            
-print("Nbr Lignes [" + str(nLine) + "]")
-print(ddCandidats)
+                    ddCandidats[candidat]['sPremiere'] = line
+                    ddCandidats[candidat]['lDerniere'] = nLine
+                    ddCandidats[candidat]['sDerniere'] = line
+
+## Duree, intervalle
+lTmp = list()
+# sRmcPremiereHeure = sRmcPremiereDate = ""
+# sRmcDerniereHeure = sRmcDerniereDate = ""
+# sZdaPremiereHeure = sZdaPremiereDate = ""
+# sZdaDerniereHeure = sZdaDerniereDate = ""
+# Pour RMC
+if (ddCandidats['RMC']['nbrL'] > 0) :
+    lTmp = ddCandidats['RMC']['sPremiere'].split(",")
+    # sRmcPremiereHeure = str(lTmp[1][0:6])
+    # sRmcPremiereDate = str(lTmp[9])
+    # ddCandidats['RMC']['dtPremiere'] = "20" + str(lTmp[9][4:6]) + str(lTmp[9][2:4]) + str(lTmp[9][0:2]) + " " + str(lTmp[1][0:6])
+    ddCandidats['RMC']['dtPremiere'] = datetime.datetime(2000 + int(lTmp[9][4:6]), int(lTmp[9][2:4]), int(lTmp[9][0:2]), int(lTmp[1][0:2]), int(lTmp[1][2:4]), int(lTmp[1][4:6]))
+    # sRmcPremiereDT = datetime.strptime(str(lTmp[9]) + str(lTmp[1]), '%d%m%y%H%M%S')
+    lTmp = ddCandidats['RMC']['sDerniere'].split(",")
+    # sRmcDerniereHeure = str(lTmp[1][0:6])
+    # sRmcDerniereDate = str(lTmp[9])
+    # ddCandidats['RMC']['dtDerniere'] =  "20" + str(lTmp[9][4:6]) + str(lTmp[9][2:4]) + str(lTmp[9][0:2]) + " " + str(lTmp[1][0:6])
+    ddCandidats['RMC']['dtDerniere'] = datetime.datetime(2000 + int(lTmp[9][4:6]), int(lTmp[9][2:4]), int(lTmp[9][0:2]), int(lTmp[1][0:2]), int(lTmp[1][2:4]), int(lTmp[1][4:6]))
+    # sRmcDerniereDT =  datetime.strptime(str(lTmp[9]) + str(lTmp[1]), '%d%m%y%H%M%S')
+    # print(time.strptime(ddCandidats['RMC']['dtDerniere'], "%Y%m%d %H%M%S"))
+    ddCandidats['RMC']['duree'] = (ddCandidats['RMC']['dtDerniere'] - ddCandidats['RMC']['dtPremiere']).total_seconds()
+    ddCandidats['RMC']['intervalle'] = round(ddCandidats['RMC']['duree']  / ddCandidats['RMC']['nbrL'], 3)
+    print(ddCandidats['RMC']['dtDerniere'], file=sys.stderr) ## 2018-06-01 14:11:21
+# Pour ZDA
+if (ddCandidats['ZDA']['nbrL'] > 0) :
+    lTmp = ddCandidats['ZDA']['sPremiere'].split(",")
+    # sZdaPremiereHeure = str(lTmp[1][0:6])
+    # sZdaPremiereDate = str(lTmp[2]) + str(lTmp[3]) + str(lTmp[4])
+    # ddCandidats['ZDA']['dtPremiere'] = str(lTmp[4]) + str(lTmp[3]) + str(lTmp[2]) + " " + str(lTmp[1][0:6])
+    ddCandidats['ZDA']['dtPremiere'] = datetime.datetime(int(lTmp[4]), int(lTmp[3]), int(lTmp[2]), int(lTmp[1][0:2]), int(lTmp[1][2:4]), int(lTmp[1][4:6]))
+    # sZdaPremiereDT = datetime.strptime(str(lTmp[2]) + str(lTmp[3]) + str(lTmp[4]) + str(lTmp[1]), '%d%m%y%H%M%S')
+    lTmp = ddCandidats['ZDA']['sDerniere'].split(",")
+    # sZdaDerniereHeure = str(lTmp[1][0:6])
+    # sZdaDerniereDate = str(lTmp[2]) + str(lTmp[3]) + str(lTmp[4])
+    # ddCandidats['ZDA']['dtDerniere'] = str(lTmp[4]) + str(lTmp[3]) + str(lTmp[2]) + " " + str(lTmp[1][0:6])
+    ddCandidats['ZDA']['dtDerniere'] = datetime.datetime(int(lTmp[4]), int(lTmp[3]), int(lTmp[2]), int(lTmp[1][0:2]), int(lTmp[1][2:4]), int(lTmp[1][4:6]))
+    # sZdaDerniereDT = datetime.strptime(str(lTmp[2]) + str(lTmp[3]) + str(lTmp[4]) + str(lTmp[1]), '%d%m%y%H%M%S')
+    ddCandidats['ZDA']['duree'] = (ddCandidats['ZDA']['dtDerniere'] - ddCandidats['ZDA']['dtPremiere']).total_seconds()
+    ddCandidats['ZDA']['intervalle'] = round(ddCandidats['ZDA']['duree']  / ddCandidats['ZDA']['nbrL'], 3)
+                    
+print(nmeaFilename + " : Nbr Lignes [" + str(nLine) + "]")
+# print(ddCandidats)
+for candidat, dCandidats in ddCandidats.items() :
+    print(candidat, dCandidats)
 exit()
 
 ##  Verif prealable de la DB
