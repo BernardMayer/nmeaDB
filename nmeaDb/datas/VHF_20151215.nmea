@@ -1,5 +1,8 @@
 20151215 (depuis le 20151125)
 Echantillon NMEA d'une VHF Standard Horizon 870
+! Des virgules à la place des points !
+! $GPRMC,062638.000,A,4714,3352,N,131,5547,W,0,0,107,0,251115,,,N*7E
+! ici                     ^          ^        ^     ^
 
 $GPGGA,062638.000,4714,3352,N,131,5547,W,1,,,-4,0,M,,,,*10
 $GPRMC,062638.000,A,4714,3352,N,131,5547,W,0,0,107,0,251115,,,N*7E

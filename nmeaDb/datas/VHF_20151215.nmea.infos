@@ -1,0 +1,3 @@
+D:\RepoS\nmeaDB\nmeaDb\datas\VHF_20151215.nmea : Nbr Lignes [180]
+RMC {'nbrL': 89, 'lPremiere': 4, 'lDerniere': 180, 'sPremiere': '$GPRMC,062638.000,A,4714,3352,N,131,5547,W,0,0,107,0,251115,,,N*7E', 'sDerniere': '$GPRMC,124701.000,A,4715,3361,N,130,5389,W,11,7,143,0,151215,,,N*45', 'dtPremiere': '0 062638', 'dtDerniere': '11 124701', 'duree': 0, 'intervalle': 0}
+ZDA {'nbrL': 0, 'lPremiere': 0, 'lDerniere': 0, 'sPremiere': '', 'sDerniere': '', 'duree': 0, 'intervalle': 0}

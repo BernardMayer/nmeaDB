@@ -1,0 +1,3 @@
+D:\RepoS\nmeaDB\nmeaDb\datas\Sortie_20170922-02.nmea : Nbr Lignes [123211]
+RMC {'nbrL': 0, 'lPremiere': 0, 'lDerniere': 0, 'sPremiere': '', 'sDerniere': '', 'dtPremiere': '', 'dtDerniere': '', 'duree': 0, 'intervalle': 0.0}
+ZDA {'nbrL': 8330, 'lPremiere': 4, 'lDerniere': 123211, 'sPremiere': '$IIZDA,125258,07,07,2017,,*52', 'sDerniere': '$IIZDA,152520,07,07,2017,,*5A', 'dtPremiere': datetime.datetime(2017, 7, 7, 12, 52, 58), 'dtDerniere': datetime.datetime(2017, 7, 7, 15, 25, 20), 'duree': 9142.0, 'intervalle': 1.097}

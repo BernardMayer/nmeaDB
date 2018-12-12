@@ -1,0 +1,3 @@
+D:\RepoS\nmeaDB\nmeaDb\datas\opcn-20170911-164500.nmea : Nbr Lignes [9518]
+RMC {'nbrL': 2645, 'lPremiere': 3, 'lDerniere': 9516, 'sPremiere': '$GPRMC,144628.000,A,4715.2652,N,00130.5556,W,0.16,3.46,110917,,,A*7D', 'sDerniere': '$GPRMC,145936.000,A,4714.3244,N,00131.5338,W,0.14,64.17,110917,,,A*47', 'dtPremiere': '20170911 144628', 'dtDerniere': '20170911 145936', 'duree': 0, 'intervalle': 0}
+ZDA {'nbrL': 0, 'lPremiere': 0, 'lDerniere': 0, 'sPremiere': '', 'sDerniere': '', 'duree': 0, 'intervalle': 0}

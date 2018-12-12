@@ -1,0 +1,3 @@
+D:\RepoS\nmeaDB\nmeaDb\datas\Nav_20180601.nmea : Nbr Lignes [342779]
+RMC {'nbrL': 6115, 'lPremiere': 2102, 'lDerniere': 342717, 'sPremiere': '$GPRMC,072618.00,A,4730.18762,N,00223.18327,W,0.018,,010618,,,A*69', 'sDerniere': '$GPRMC,141121.00,A,4730.16524,N,00223.15052,W,0.015,,010618,,,D*6F', 'dtPremiere': datetime.datetime(2018, 6, 1, 7, 26, 18), 'dtDerniere': datetime.datetime(2018, 6, 1, 14, 11, 21), 'duree': 24303.0, 'intervalle': 3.974}
+ZDA {'nbrL': 22259, 'lPremiere': 16, 'lDerniere': 342778, 'sPremiere': '$IIZDA,072326,01,06,2018,,*51', 'sDerniere': '$IIZDA,141124,01,06,2018,,*50', 'dtPremiere': datetime.datetime(2018, 6, 1, 7, 23, 26), 'dtDerniere': datetime.datetime(2018, 6, 1, 14, 11, 24), 'duree': 24478.0, 'intervalle': 1.1}
