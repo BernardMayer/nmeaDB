@@ -1,30 +1,28 @@
-@cls
-@setlocal enabledelayedexpansion
-@rem 65001 UTF8, 850 	Multilingual (Latin I), 437 	United States, 1252 	West European Latin
-@rem cscript.exe //U
-@CHCP 65001
+@set pyBin=D:\myTools\Python\Python36\python.exe
+@set appHome=D:\RepoS\nmeaDB\nmeaDb
 
-@set TAB=\t
+@rem  VHF_20151215.nmea contient des $GPRMC non conformes !
+@rem @set nmeaFile=VHF_20151215.nmea
 
-@REM @set homeDir=D:\_perso\bateau\TaC\nmeaDb
-@REM @set dataDir=C:\RepoGit\Bateau\TaC\Terminal
-@REM @set homePosix=D:\myTools\GOW
-@REM @set pythonHome=D:\myTools\Python\Python36
-@REM @set dbBin=D:\myTools\sqlite\sqlite3.exe
+@set nmeaFile=
+@set nmeaFile=AISSinagot.nmea
+@set nmeaFile=Calibration01.nmea
+@set nmeaFile=Garmin152h.nmea
+@set nmeaFile=Nav_20180601.nmea
+@rem @set nmeaFile=NkeLauBen.nmea
+@rem @set nmeaFile=opcn-20170911-082000.nmea
+@rem @set nmeaFile=opcn-20170911-164500.nmea
+@rem @set nmeaFile=opcn-20170912-081000.nmea
+@rem @set nmeaFile=opcn-20170912-184500.nmea
+@rem @set nmeaFile=opcn-20170913-081500.nmea
+@rem @set nmeaFile=opcn-20170913-163000.nmea
+@rem @set nmeaFile=Sortie_20170922-01.nmea
+@rem @set nmeaFile=Sortie_20170922-02.nmea
+@rem @set nmeaFile=opcn-20170911-164500.nmea
 
-@set homeDir=C:\RepoGit\nmeaDB\nmeaDb
-@set dataDir=C:\RepoGit\Bateau\TaC\Terminal
-@set homePosix=C:\CAT_dskD\myTools\GOW
-@set pythonHome=C:\CAT_dskD\myTools\Python\Python36
-@set dbBin=C:\CAT_dskD\myTools\sqlite\sqlite3.exe
-
-@rem Quels sont les differents talkers ?
-@rem %pythonHome%\python.exe nmeaTalkers.py %nmeaFile%
-
-@set nmeaDB=nmeaDb.sqlite
-@set nmeaFileID=5
-@set nmeaValeurDuPas=600
-
-%pythonHome%\python.exe nmeaRun.py %homeDir%\%nmeaDB% %nmeaFileID% %nmeaValeurDuPas%
-
-@echo "--- fin import %nmeaFile% ---"
+%pyBin% ^
+	%appHome%\nmeaImportNmeaFile_TS.py ^
+	%appHome%\datas\%nmeaFile% ^
+	%appHome%\nmeaDb.sqlite ^
+	1> %appHome%\datas\%nmeaFile%.infos ^
+	2> %appHome%\%nmeaFile%.log
