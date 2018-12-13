@@ -68,7 +68,7 @@ epoch = int(time.time())
 # print(datetime.datetime.now().isoformat()) # 2017-10-31T10:52:02.101865
 # print(time.strftime("%Y-%m-%d %H:%M:%S")) # 2017-10-31 10:52:02
 # print(int(time.time())) # 1509443642
-    
+
 ## Informations sur le fichier a importer
 BLOCKSIZE = 65536
 hasher = hashlib.md5()
@@ -77,7 +77,7 @@ with open(nmeaFilename, 'rb') as afile:
     while len(buf) > 0:
         hasher.update(buf)
         buf = afile.read(BLOCKSIZE)
-#print(hasher.hexdigest())    
+#print(hasher.hexdigest())
 fileCheck = hasher.hexdigest()
 
 mTimeEpoch = int(os.path.getmtime(nmeaFilename)) # format epoch
@@ -92,7 +92,7 @@ basename = os.path.basename(nmeaFilename)
 
 ##
 ## (option) Timestamp en epoch au début et/ou en TS à la fin de chaque ligne NMEA
-##  
+##
 
 ##  Place disponible (2 x la taille du fichier)
 # nmeaFilenameSize = os.path.getsize(nmeaFilename)
@@ -145,6 +145,9 @@ ddCandidats['RMC']['dtPremiere'] = ""
 ddCandidats['RMC']['dtDerniere'] = ""
 ddCandidats['RMC']['duree'] = 0
 ddCandidats['RMC']['intervalle'] = 0.0
+ddCandidats['RMC']['couvertureDebut'] = 0.0
+ddCandidats['RMC']['couvertureFin'] = 0.0
+ddCandidats['RMC']['couvertureTotale'] = 0.0
 ddCandidats['ZDA'] = dict()
 ddCandidats['ZDA']['nbrL'] = 0
 ddCandidats['ZDA']['lPremiere'] = 0
@@ -155,24 +158,46 @@ ddCandidats['ZDA']['dtPremiere'] = ""
 ddCandidats['ZDA']['dtDerniere'] = ""
 ddCandidats['ZDA']['duree'] = 0
 ddCandidats['ZDA']['intervalle'] = 0.0
+ddCandidats['ZDA']['couvertureDebut'] = 0.0
+ddCandidats['ZDA']['couvertureFin'] = 0.0
+ddCandidats['ZDA']['couvertureTotale'] = 0.0
 
 for candidat, dCandidats in ddCandidats.items() :
     lCandidats.append(candidat)
 
+def getDtFromNmeaLine(line) :
+    candidat = line[3:6]
+    if (candidat == 'RMC') :
+        lTmp = line.split(",")
+        return datetime.datetime(2000 + int(lTmp[9][4:6]), int(lTmp[9][2:4]), int(lTmp[9][0:2]), int(lTmp[1][0:2]), int(lTmp[1][2:4]), int(lTmp[1][4:6]))
+    if (candidat == 'ZDA') :
+        lTmp = line.split(",")
+        return datetime.datetime(int(lTmp[4]), int(lTmp[3]), int(lTmp[2]), int(lTmp[1][0:2]), int(lTmp[1][2:4]), int(lTmp[1][4:6]))
+        
+        
+dernierCandidat = ""
+dernierDT = None
+dernierNumL = 0
+deltaRmcZda = None
+deltaRmcZdaNbr = 0
+deltaRmcZdaSeuil = 3
+deltaRmcZdaSeuilFranchi = None
+deltaRmcZdaSeuilFranchiProportion = None
 with open(nmeaFilename, 'r') as fNmea :
-    nLineCandidatFirst = nLineCandidtaLast = nLine = 0
+    nLineRaw = nLine = 0
     for line in fNmea.readlines() :
+        nLineRaw += 1
         line = line.rstrip()
         if (line == "") :
             continue
         if (line[0:3] == "!AI") :
             continue
         nLine += 1
-        if (line[0:1] == "$") : 
+        if (line[0:1] == "$") :
             candidat = line[3:6]
             # print(candidat)
-            if (candidat in lCandidats) : 
-                ddCandidats[candidat]['nbrL'] = ddCandidats[candidat]['nbrL'] + 1
+            if (candidat in lCandidats) :
+                ddCandidats[candidat]['nbrL'] += 1
                 ddCandidats[candidat]['lDerniere'] = nLine
                 ddCandidats[candidat]['sDerniere'] = line
                 if (ddCandidats[candidat]['lPremiere']) == 0 :
@@ -180,58 +205,78 @@ with open(nmeaFilename, 'r') as fNmea :
                     ddCandidats[candidat]['sPremiere'] = line
                     ddCandidats[candidat]['lDerniere'] = nLine
                     ddCandidats[candidat]['sDerniere'] = line
+                if (candidat == 'RMC') :
+                    dernierCandidat = candidat
+                    dernierDT = getDtFromNmeaLine(line)
+                    dernierNumL = nLine
+                if (candidat == 'ZDA' and dernierCandidat == 'RMC' and (nLine - dernierNumL) < 50) : 
+                    deltaRmcZdaNbr += 1
+                    deltaRmcZda = (getDtFromNmeaLine(line) - dernierDT).total_seconds()
+                    if (abs(deltaRmcZda) > deltaRmcZdaSeuil) :
+                        if (deltaRmcZdaSeuilFranchi is None) :
+                            deltaRmcZdaSeuilFranchi = 0
+                        deltaRmcZdaSeuilFranchi += 1
+                        print("Ligne : ", nLineRaw, ", deltaRmcZda :", deltaRmcZda)
+deltaRmcZdaSeuilFranchiProportion = round(deltaRmcZdaSeuilFranchi * 100 / deltaRmcZdaNbr, 2)
 
+print("La recherche des deltas entre RMC puis ZDA a un seuil de : ", deltaRmcZdaSeuil, " secondes")
+print(deltaRmcZdaNbr, " deltas en tout, dont ", deltaRmcZdaSeuilFranchi, " seuil franchi soit ", deltaRmcZdaSeuilFranchiProportion, "%")
+
+
+                    
 ## Duree, intervalle
+## Couvertures de chacun des candidats
 lTmp = list()
-# sRmcPremiereHeure = sRmcPremiereDate = ""
-# sRmcDerniereHeure = sRmcDerniereDate = ""
-# sZdaPremiereHeure = sZdaPremiereDate = ""
-# sZdaDerniereHeure = sZdaDerniereDate = ""
 # Pour RMC
 if (ddCandidats['RMC']['nbrL'] > 0) :
     lTmp = ddCandidats['RMC']['sPremiere'].split(",")
-    # sRmcPremiereHeure = str(lTmp[1][0:6])
-    # sRmcPremiereDate = str(lTmp[9])
     # ddCandidats['RMC']['dtPremiere'] = "20" + str(lTmp[9][4:6]) + str(lTmp[9][2:4]) + str(lTmp[9][0:2]) + " " + str(lTmp[1][0:6])
     ddCandidats['RMC']['dtPremiere'] = datetime.datetime(2000 + int(lTmp[9][4:6]), int(lTmp[9][2:4]), int(lTmp[9][0:2]), int(lTmp[1][0:2]), int(lTmp[1][2:4]), int(lTmp[1][4:6]))
     # sRmcPremiereDT = datetime.strptime(str(lTmp[9]) + str(lTmp[1]), '%d%m%y%H%M%S')
     lTmp = ddCandidats['RMC']['sDerniere'].split(",")
-    # sRmcDerniereHeure = str(lTmp[1][0:6])
-    # sRmcDerniereDate = str(lTmp[9])
     # ddCandidats['RMC']['dtDerniere'] =  "20" + str(lTmp[9][4:6]) + str(lTmp[9][2:4]) + str(lTmp[9][0:2]) + " " + str(lTmp[1][0:6])
     ddCandidats['RMC']['dtDerniere'] = datetime.datetime(2000 + int(lTmp[9][4:6]), int(lTmp[9][2:4]), int(lTmp[9][0:2]), int(lTmp[1][0:2]), int(lTmp[1][2:4]), int(lTmp[1][4:6]))
     # sRmcDerniereDT =  datetime.strptime(str(lTmp[9]) + str(lTmp[1]), '%d%m%y%H%M%S')
     # print(time.strptime(ddCandidats['RMC']['dtDerniere'], "%Y%m%d %H%M%S"))
     ddCandidats['RMC']['duree'] = (ddCandidats['RMC']['dtDerniere'] - ddCandidats['RMC']['dtPremiere']).total_seconds()
     ddCandidats['RMC']['intervalle'] = round(ddCandidats['RMC']['duree']  / ddCandidats['RMC']['nbrL'], 3)
+    ddCandidats['RMC']['couvertureDebut'] = round(ddCandidats['RMC']['lPremiere'] * 100 / nLine, 2)
+    ddCandidats['RMC']['couvertureFin'] = round(ddCandidats['RMC']['lDerniere'] * 100 / nLine, 2)
+    ddCandidats['RMC']['couvertureTotale'] = ddCandidats['RMC']['couvertureFin'] - ddCandidats['RMC']['couvertureDebut']
     print(ddCandidats['RMC']['dtDerniere'], file=sys.stderr) ## 2018-06-01 14:11:21
 # Pour ZDA
 if (ddCandidats['ZDA']['nbrL'] > 0) :
     lTmp = ddCandidats['ZDA']['sPremiere'].split(",")
-    # sZdaPremiereHeure = str(lTmp[1][0:6])
-    # sZdaPremiereDate = str(lTmp[2]) + str(lTmp[3]) + str(lTmp[4])
     # ddCandidats['ZDA']['dtPremiere'] = str(lTmp[4]) + str(lTmp[3]) + str(lTmp[2]) + " " + str(lTmp[1][0:6])
     ddCandidats['ZDA']['dtPremiere'] = datetime.datetime(int(lTmp[4]), int(lTmp[3]), int(lTmp[2]), int(lTmp[1][0:2]), int(lTmp[1][2:4]), int(lTmp[1][4:6]))
     # sZdaPremiereDT = datetime.strptime(str(lTmp[2]) + str(lTmp[3]) + str(lTmp[4]) + str(lTmp[1]), '%d%m%y%H%M%S')
     lTmp = ddCandidats['ZDA']['sDerniere'].split(",")
-    # sZdaDerniereHeure = str(lTmp[1][0:6])
-    # sZdaDerniereDate = str(lTmp[2]) + str(lTmp[3]) + str(lTmp[4])
     # ddCandidats['ZDA']['dtDerniere'] = str(lTmp[4]) + str(lTmp[3]) + str(lTmp[2]) + " " + str(lTmp[1][0:6])
     ddCandidats['ZDA']['dtDerniere'] = datetime.datetime(int(lTmp[4]), int(lTmp[3]), int(lTmp[2]), int(lTmp[1][0:2]), int(lTmp[1][2:4]), int(lTmp[1][4:6]))
     # sZdaDerniereDT = datetime.strptime(str(lTmp[2]) + str(lTmp[3]) + str(lTmp[4]) + str(lTmp[1]), '%d%m%y%H%M%S')
     ddCandidats['ZDA']['duree'] = (ddCandidats['ZDA']['dtDerniere'] - ddCandidats['ZDA']['dtPremiere']).total_seconds()
     ddCandidats['ZDA']['intervalle'] = round(ddCandidats['ZDA']['duree']  / ddCandidats['ZDA']['nbrL'], 3)
-                    
-print(nmeaFilename + " : Nbr Lignes [" + str(nLine) + "]")
+    ddCandidats['ZDA']['couvertureDebut'] = round(ddCandidats['ZDA']['lPremiere'] * 100 / nLine, 2)
+    ddCandidats['ZDA']['couvertureFin'] = round(ddCandidats['ZDA']['lDerniere'] * 100 / nLine, 2)
+    ddCandidats['ZDA']['couvertureTotale'] = ddCandidats['ZDA']['couvertureFin'] - ddCandidats['ZDA']['couvertureDebut']
+
+    
+    
+    
+print(nmeaFilename + " : Nbr Lignes NMEA [" + str(nLine) + "]")
 # print(ddCandidats)
 for candidat, dCandidats in ddCandidats.items() :
-    print(candidat, dCandidats)
+    print("Pour le candidat [" + candidat + "]")
+    for key, val in dCandidats.items() :
+        print(candidat + "\t" + key + "\t" + str(val))
+    # print(candidat, dCandidats)
+
 exit()
 
 ##  Verif prealable de la DB
 
 if (not os.path.exists(nmeaDbname)) :
-    print("E:Base", nmeaDbname, "introuvable")
+    print("E:Base", nmeaDbname, "introuvable", file=sys.stderr)
     quit()
 try :
     db = sqlite3.connect(nmeaDbname)
@@ -250,7 +295,7 @@ try :
     cursor.execute("SELECT COUNT(*) AS ""NbrL"" FROM nmeaValues")
     nbrL = cursor.fetchone()
 except Exception as e :
-    print("E:Pb avec la DB [" + nmeaDbname + "]")
+    print("E:Pb avec la DB [" + nmeaDbname + "]", file=sys.stderr)
     db.close()
     quit()
 
@@ -276,15 +321,15 @@ def getXydtFromInstruments(id, val) :
             retY = '-' + gll[2]
         #print(val, ' --> ', retX, '/', retY)
     return(retX, retY, retXY, retDT)
-    
+
 def getXydtFromGps(id, val) :
     retX = retY = retXY = retDT = None
-    
+
     return(retX, retY, retXY, retDT)
 
 def getXydt(id, val) :
     retX = retY = retXY = retDT = None
-    
+
     return(retX, retY, retXY, retDT)
 
 
@@ -326,7 +371,7 @@ try :
     $IIZDA,051702,08,06,2018,,*5B
     $GPGGA xy (time sans date)
     $GPGGA,083718,4740.2898,N,00321.2259,W,1,12,0.8,1.7,M,49.5,M,,*50
-    Les n premieres lignes du fichier seront parcourues, 
+    Les n premieres lignes du fichier seront parcourues,
     afin de déterminer quel type de trammes sera pris en compte.
     """
     ##  Marquage spatial et temporel
@@ -335,14 +380,14 @@ try :
     NbrSampleLines = 1000
     ##  Nombre de trame par type
     nbIIGLL = nbIIZDA = nbRMC = nbGLL = nbGGA = nbZDA = 0
-    ##  Type de trame 
+    ##  Type de trame
     ttIIGLL = nbIIZDA = ttRMC = ttGLL = ttGGA = ttZDA = False
     ##  Listes de types choisis
     dtTrameTypesList = list()
     xyTrameTypesList = list()
     xydtTrameTypesList = list()
     ##  Talker de trames a prendre en compte
-    ##  'G' pour GPRMC 
+    ##  'G' pour GPRMC
     ##  'I' pour IIGLL + IIZDA
     ##  (reste aussi IIRMC...)
     favori = 'G'
@@ -355,9 +400,9 @@ try :
             if (line[0:3] == "!AI") :
                 continue
             nLine += 1
-            if (nLine > NbrSampleLines) : 
+            if (nLine > NbrSampleLines) :
                 break
-            if (line[0:1] != "$") : 
+            if (line[0:1] != "$") :
                 traceInfo = traceInfo + line
                 id = ""
                 val = line
@@ -397,57 +442,57 @@ try :
         if (nbIIGLL > (NbrSampleLines / 50) and nbIIZDA > (NbrSampleLines / 50)) :
             dtTrameTypesList = ('$IIZDA')
             xyTrameTypesList = ('$IIGLL')
-            print("I;Utilisation des trames IIGLL et IIZDA pour marquage spatial et temporel")
+            print("I;Utilisation des trames IIGLL et IIZDA pour marquage spatial et temporel", file=sys.stderr)
             if (favori == 'G') :
                 favori = 'I'
-                print("W; ! Les trames preferees deviennent les trames $II !")
+                print("W; ! Les trames preferees deviennent les trames $II !", file=sys.stderr)
             xydt = True
         else :
             if (ttRMC or ttZDA) :
                 ##  Test de la quantite de RMC (2% de l'echantillon)
                 if (nbRMC > (NbrSampleLines / 50)) :
                     dtTrameTypesList = ('$IIRMC', '$ECRMC', '$GPRMC')
-                    print("I;Utilisation exclusive de trames RMC pour marquage temporel")
+                    print("I;Utilisation exclusive de trames RMC pour marquage temporel", file=sys.stderr)
                     if (favori == 'I') :
                         favori = 'G'
-                        print("W; ! Les trames preferees deviennent les trames $GPRMC !")
+                        print("W; ! Les trames preferees deviennent les trames $GPRMC !", file=sys.stderr)
                 else :
                     dtTrameTypesList = ('$IIRMC', '$ECRMC', '$GPRMC', '$IIZDA', '$ECZDA')
-                    print("I;Utilisation de trames RMC et ZDA pour marquage temporel")
+                    print("I;Utilisation de trames RMC et ZDA pour marquage temporel", file=sys.stderr)
                     favori = ''
-                    print("W; ! Plus de trames preferee !")
+                    print("W; ! Plus de trames preferee !", file=sys.stderr)
                 xydt = True
             else :
-                print("W; ! Pas de marquage temporel possible !")
+                print("W; ! Pas de marquage temporel possible !", file=sys.stderr)
             ##  Test si marquage spatial possible
             if (ttRMC or ttGLL or ttGGA) :
                 ##  Test de la quantite de RMC (2% de l'echantillon)
                 if (nbRMC > (NbrSampleLines / 50)) :
                     xyTrameTypesList = ('$IIRMC', '$ECRMC', '$GPRMC')
-                    print("I;Utilisation exclusive de trames RMC pour marquage spatial")
+                    print("I;Utilisation exclusive de trames RMC pour marquage spatial", file=sys.stderr)
                     if (favori == 'I') :
                         favori = 'G'
-                        print("W; ! Les trames preferees deviennent les trames $GPRMC !")
+                        print("W; ! Les trames preferees deviennent les trames $GPRMC !", file=sys.stderr)
                 else :
                     xyTrameTypesList = ('$IIRMC', '$ECRMC', '$GPRMC', '$ECGLL', '$GPGLL', '$ECGGA', '$GPGGA', '$IIGLL', '$IIGGA')
-                    print("I;Utilisation trames RMC, GLL et GGA pour marquage spatial")
+                    print("I;Utilisation trames RMC, GLL et GGA pour marquage spatial", file=sys.stderr)
                     favori = ''
-                    print("W; ! Plus de trames preferee !")
+                    print("W; ! Plus de trames preferee !", file=sys.stderr)
                 xydt = True
             else :
-                print("W; ! Pas de marquage spatial possible !")
-    
+                print("W; ! Pas de marquage spatial possible !", file=sys.stderr)
+
     xydtTrameTypesList = xyTrameTypesList + dtTrameTypesList
-    
-    #quit()    
-                
-     
+
+    #quit()
+
+
 
 
 
     ## feed nmeaValues
     lat = lon = latlon = ts = dt = "NULL"
-    sql = "INSERT INTO nmeaValues(FileID, FileLineNum, lat, lon, latlon, ts, dt, NmeaID, NmeaVal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);" 
+    sql = "INSERT INTO nmeaValues(FileID, FileLineNum, lat, lon, latlon, ts, dt, NmeaID, NmeaVal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"
     traceInfo = ""
     with open(nmeaFilename, 'r') as fNmea :
         nLine = 0
@@ -458,7 +503,7 @@ try :
             if (line[0:3] == "!AI") :
                 continue
             nLine += 1
-            if (line[0:1] != "$") : 
+            if (line[0:1] != "$") :
                 traceInfo = traceInfo + line
                 id = ""
                 val = line
@@ -467,14 +512,14 @@ try :
                 id = line[0:commaPos]
                 val = line[commaPos + 1:]
                 ## Test si trame avec information temporelle ou positionnelle
-                if (xydt) :                
+                if (xydt) :
                     if (favori == 'I' and id[0:3] == '$II') :
                         (retX, retY, retXY, retDT) = getXydtFromInstruments(id, val)
                     elif (favori == 'G' and id[0:3] == '$GP') :
                         (retX, retY, retXY, retDT) = getXydtFromGps(id, val)
                     elif (id in xydtTrameTypesList) :
                         (retX, retY, retXY, retDT) = getXydt(id, val)
-                    if (retX != None) : 
+                    if (retX != None) :
                         lat = retX
                     if (retY != None) :
                         lon = retY
@@ -488,7 +533,7 @@ try :
                     # pass
                 # if (xyTrameType == "") :
                     # pass
-            cursor.execute(sql, (fileId, nLine, lat, lon, latlon, ts, dt, id, val))    
+            cursor.execute(sql, (fileId, nLine, lat, lon, latlon, ts, dt, id, val))
     ## feed nmeaTraces
     sql = "INSERT INTO nmeaTraces(FileID, TraceName, LineStart, LineStop, TraceInfo) VALUES(?, ?, ?, ?, ?);"
     cursor.execute(sql, (fileId, basename, 1, nLine, traceInfo))
@@ -496,14 +541,14 @@ try :
     print("Import de " + str(nLine) + " lignes (FileID:" + str(fileId) + ")")
 except Exception as e :
     db.rollback()
-    print("Pb avec import de [" + nmeaFilename + "]")
-    print(e)
-    
+    print("E:Pb avec import de [" + nmeaFilename + "]", file=sys.stderr)
+    print(e, file=sys.stderr)
 
 
 
-    
-# dTalkers = dict()    
+
+
+# dTalkers = dict()
 # with open(nmeaFilename, 'r') as fNmea :
     # nLine = 0
     # for line in fNmea.readlines() :
