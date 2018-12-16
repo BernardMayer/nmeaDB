@@ -136,8 +136,10 @@ $IIZDA	194020,20,09,2017,,*5E
 $IIZDA	152520,07,07,2017,,*5A
 """
 
+dRMCs = dict()
 candidatVoulu = 'ZDA'
 dPivots = dict()
+dPivotsSorted = collections.OrderedDict()
 dPivot = dict()
 dPivot['ZDAepoch'] = 0
 dPivot['VHW'] = 0.0
@@ -164,12 +166,13 @@ def getDtFromNmeaLine(line) :
     candidat = line[3:6]
     if (candidat == 'RMC') :
         lTmp = line.split(",")
-        ts = int("20" + lTmp[9][4:6] + lTmp[9][2:4] + lTmp[9][0:2] + lTmp[1][0:2] + lTmp[1][2:4] + lTmp[1][4:6])
-        dt = datetime.datetime(2000 + int(lTmp[9][4:6]), int(lTmp[9][2:4]), int(lTmp[9][0:2]), int(lTmp[1][0:2]), int(lTmp[1][2:4]), int(lTmp[1][4:6]))
+        # $GPRMC,072648.00,A,4730.18648,N,00223.18287,W,0.049,46.36,010618,,,A*43
+        ts = float("20" + lTmp[9][4:6] + lTmp[9][2:4] + lTmp[9][0:2] + lTmp[1][0:2] + lTmp[1][2:4] + str(lTmp[1][4:]))
+        dt = datetime.datetime(2000 + int(lTmp[9][4:6]), int(lTmp[9][2:4]), int(lTmp[9][0:2]), int(lTmp[1][0:2]), int(lTmp[1][2:4]), int(lTmp[1][4:6]), int(lTmp[1][8:]))
         return ts, dt
     if (candidat == 'ZDA') :
         lTmp = line.split(",")
-        ts = int(lTmp[4] + lTmp[3] + lTmp[2] + lTmp[1][0:2] + lTmp[1][2:4] + lTmp[1][4:6])
+        ts = float(lTmp[4] + lTmp[3] + lTmp[2] + lTmp[1][0:2] + lTmp[1][2:4] + lTmp[1][4:6])
         dt = datetime.datetime(int(lTmp[4]), int(lTmp[3]), int(lTmp[2]), int(lTmp[1][0:2]), int(lTmp[1][2:4]), int(lTmp[1][4:6]))
         return (ts, dt)
 
@@ -228,6 +231,7 @@ ts = 0
 with open(nmeaFilename, 'r') as fNmea :
     nLineRaw = nLine = 0
     for line in fNmea.readlines() :
+        candidat = ""
         nLineRaw += 1
         line = line.rstrip()
         if (line == "") :
@@ -247,18 +251,19 @@ with open(nmeaFilename, 'r') as fNmea :
                         ts += 1
                         # TODO
                         # Ajouter 1 seconde a dt
+                        dt = dt + datetime.timedelta(seconds = 1)
                     else :
                         # print("W:La clef " + str(ts) + " existe encore (L:" + str(nLineRaw) + ") pour dt:" + str(dt), file=sys.stderr)
                         ts += 1.1
                         # TODO
                         # Ajouter 1.1 seconde a dt
+                        dt = dt + datetime.timedelta(seconds = 1, microseconds = 100000)
                         
                 if (ts != 0) :
                     dPivots[ts] = dict()
                     dPivots[ts]['dt'] = dt
                     # dPivots[ts]['nLineRaw'] = nLineRaw
             else :
-                # TODO
                 # Fonction generique de traitement du candidat
                 if (ts != 0) :
                     retCode = xtrInfos(candidat, line, dPivots[ts])
@@ -266,14 +271,58 @@ with open(nmeaFilename, 'r') as fNmea :
                         print("? ? ? :", line, file=sys.stderr)
                     else :
                         print("retCode :", retCode, file=sys.stderr)"""
+                # TODO
+                # RMC ?
+                if (candidat == 'RMC') :
+                    pass
+                    (RMCts, RMCdt) = getDtFromNmeaLine(line)
+                    # print("RMCts", RMCts, file=sys.stderr)
+                    lTmp = line.split(",")
+                    """ RMC - Recommended Minimum Navigation Information   1  1 1  1
+                            1         2 3       4 5        6  7   8   9    0  1 2  3
+                            |         | |       | |        |  |   |   |    |  | |  |
+                     $--RMC,hhmmss.ss,A,llll.ll,a,yyyyy.yy,a,x.x,x.x,xxxx,x.x,a,m,*hh<CR><LF>
+                    Field Number:
+                        UTC Time
+                        Status, V=Navigation receiver warning A=Valid
+                        Latitude
+                        N or S
+                        Longitude
+                        E or W
+                        Speed over ground, knots
+                        Track made good, degrees true
+                        Date, ddmmyy
+                        Magnetic Variation, degrees
+                        E or W
+                    """
+                    if (lTmp[2] == 'A') :
+                        dRMCs[RMCts] = dict()
+                        dRMCs[RMCts]['RMCdt'] = RMCdt
+                        dRMCs[RMCts]['RMCLatLon'] = str(float(lTmp[3])) + "," + lTmp[4] + "," + str(float(lTmp[5])) + "," + lTmp[6]
+                        
 
-dPivots[19700101000000] = dict()
-dPivots[19700101000000]['DBT'] = 2.3
-dPivots[20140501120000] = dict()
-dPivots[20140501120000]['DBT'] = 3.4
 
-for (k, v) in dPivots.items() :
+
+
+
+for (RMCts, v) in dRMCs.items() :
+    # print("RMCts : ", RMCts, "\t", v, file=sys.stderr)
+    if (RMCts not in dPivots) :
+        dPivots[RMCts] = dict()
+        print("RMCts NOT in lKeys_dPivots ", RMCts, file=sys.stderr)
+        # print(RMCts, dPivots[RMCts]['GLL'], dPivots[RMCts]['RMCLatLon'], file=sys.stderr)
+    dPivots[RMCts]['RMCdt'] = dRMCs[RMCts]['RMCdt']
+    dPivots[RMCts]['RMCLatLon'] = dRMCs[RMCts]['RMCLatLon']
+
+
+# lKeys_dPivotsSorted = sorted(dPivots)
+# print(lKeys_dPivotsSorted, file=sys.stderr)
+for k in sorted(dPivots) :
+    dPivotsSorted[k] = dPivots[k]
+    
+for (k, v) in dPivotsSorted.items() :
     print("k : ", k, "\t", v)
+
 quit()
 
 
