@@ -1,4 +1,4 @@
-#!/python
+﻿#!/python
 # -*- coding: utf-8 -*-
 
 ### http://sametmax.com/lencoding-en-python-une-bonne-fois-pour-toute/
@@ -21,6 +21,11 @@ cgitb.enable(format='text')
 import pyodbc
 import sqlite3
 import hashlib
+### http://sweetohm.net/article/introduction-yaml.html
+import yaml
+### https://docs.python.org/fr/2/tutorial/inputoutput.html#reading-and-writing-files
+### http://sametmax.com/faire-manger-du-datetime-a-json-en-python/
+import json
 import sys
 import os
 # import shutil
@@ -261,7 +266,8 @@ with open(nmeaFilename, 'r') as fNmea :
                         
                 if (ts != 0) :
                     dPivots[ts] = dict()
-                    dPivots[ts]['dt'] = dt
+                    ##  JSON ne digere pas les datetime...
+                    # dPivots[ts]['dt'] = dt
                     # dPivots[ts]['nLineRaw'] = nLineRaw
             else :
                 # Fonction generique de traitement du candidat
@@ -297,7 +303,8 @@ with open(nmeaFilename, 'r') as fNmea :
                     """
                     if (lTmp[2] == 'A') :
                         dRMCs[RMCts] = dict()
-                        dRMCs[RMCts]['RMCdt'] = RMCdt
+                        ##  JSON ne digere pas les datetime...
+                        # dRMCs[RMCts]['RMCdt'] = RMCdt
                         dRMCs[RMCts]['RMCLatLon'] = str(float(lTmp[3])) + "," + lTmp[4] + "," + str(float(lTmp[5])) + "," + lTmp[6]
                         
 
@@ -311,7 +318,7 @@ for (RMCts, v) in dRMCs.items() :
         dPivots[RMCts] = dict()
         print("RMCts NOT in lKeys_dPivots ", RMCts, file=sys.stderr)
         # print(RMCts, dPivots[RMCts]['GLL'], dPivots[RMCts]['RMCLatLon'], file=sys.stderr)
-    dPivots[RMCts]['RMCdt'] = dRMCs[RMCts]['RMCdt']
+    # dPivots[RMCts]['RMCdt'] = dRMCs[RMCts]['RMCdt']
     dPivots[RMCts]['RMCLatLon'] = dRMCs[RMCts]['RMCLatLon']
 
 
@@ -321,8 +328,17 @@ for k in sorted(dPivots) :
     dPivotsSorted[k] = dPivots[k]
     
 for (k, v) in dPivotsSorted.items() :
+    pass
     print("k : ", k, "\t", v)
 
+# print(yaml.dump(dPivotsSorted))
+
+f = open(nmeaFilename + ".yaml", 'w')
+yaml.dump(dPivotsSorted, f)    
+f.close()
+f = open(nmeaFilename + ".json", 'w')
+json.dump(dPivotsSorted, f, indent=2, separators=(", ", ": "))   
+f.close()
 quit()
 
 
