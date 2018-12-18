@@ -22,8 +22,10 @@
 
 @rem nmeaDB_ExamineDateheureRmcZda.py
 @rem nmeaDB_ExamineDateheureRmcZda.py
+@rem nmeaDB_RotateNmeaFile.py
+@rem 
 %pyBin% ^
-	%appHome%\nmeaDB_RotateNmeaFile.py ^
+	%appHome%\nmeaDB_RotateNmeaFile-vKEpoch.py ^
 	%appHome%\datas\%nmeaFile% ^
 	%appHome%\nmeaDb.sqlite ^
 	1> %appHome%\analyses\%nmeaFile%.infos ^
