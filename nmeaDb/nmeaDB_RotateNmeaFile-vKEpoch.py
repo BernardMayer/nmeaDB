@@ -164,9 +164,13 @@ dPivot['VWTtws'] = 0.0
 dPivot['MTA'] = 0.0
 dPivot['HDM'] = 0.0
 dPivot['GLL'] = ""
+dPivot['GLLlatNum'] = 0.0
+dPivot['GLLlonNum'] = 0.0
 dPivot['RMCts'] = 0
 # dPivot['RMCep'] = 0
 dPivot['RMClatlon'] = ""
+dPivot['RMClatNum'] = 0.0
+dPivot['RMClonNum'] = 0.0
 
 def getDtFromNmeaLine(line) :
     global dt1970
@@ -231,6 +235,14 @@ def xtrInfos(candidat, line, dP) :
     if (candidat == 'GLL') :
         if (lTmp[6] == 'A') :
             dP[candidat] = str(float(lTmp[1])) + "," + lTmp[2] + "," + str(float(lTmp[3])) + "," + lTmp[4]
+            if (lTmp[2] == 'S') :
+                dP['GLLlatNum'] = float("-" + lTmp[1])
+            else :
+                dP['GLLlatNum'] = float(lTmp[1])
+            if (lTmp[4] == 'W') :
+                dP['GLLlonNum'] = float("-" + lTmp[3])
+            else :
+                dP['GLLlonNum'] = float(lTmp[3])
             return candidat + " = " +  dP[candidat] + " dans " + line
         else :
             return None
@@ -314,8 +326,15 @@ with open(nmeaFilename, 'r') as fNmea :
                         ##  JSON ne digere pas les datetime...
                         # dRMCs[RMCep]['RMCdt'] = RMCdt
                         dRMCs[RMCep]['RMCLatLon'] = str(float(lTmp[3])) + "," + lTmp[4] + "," + str(float(lTmp[5])) + "," + lTmp[6]
-                        
-
+                        # "RMCLatLon": "4730.27516,N,223.75845,W"
+                        if (lTmp[4] == 'S') : 
+                            dRMCs[RMCep]['RMCLatNum'] = float("-" + lTmp[3])
+                        else :
+                            dRMCs[RMCep]['RMCLatNum'] = float(lTmp[3])
+                        if (lTmp[6] == 'W') : 
+                            dRMCs[RMCep]['RMCLonNum'] = float("-" + lTmp[5])
+                        else :
+                            dRMCs[RMCep]['RMCLonNum'] = float(lTmp[5])
 
 
 
@@ -328,6 +347,8 @@ for (RMCep, v) in dRMCs.items() :
         # print(RMCep, dPivots[RMCep]['GLL'], dPivots[RMCep]['RMCLatLon'], file=sys.stderr)
     # dPivots[RMCep]['RMCdt'] = dRMCs[RMCep]['RMCdt']
     dPivots[RMCep]['RMCLatLon'] = dRMCs[RMCep]['RMCLatLon']
+    dPivots[RMCep]['RMCLatNum'] = dRMCs[RMCep]['RMCLatNum']
+    dPivots[RMCep]['RMCLonNum'] = dRMCs[RMCep]['RMCLonNum']
 
 
 # lKeys_dPivotsSorted = sorted(dPivots)
