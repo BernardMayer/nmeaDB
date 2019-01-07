@@ -140,6 +140,10 @@ $IIZDA,hhmmss.ss,xx,xx,xxxx,,*hh
 $IIZDA	194020,20,09,2017,,*5E
 $IIZDA	152520,07,07,2017,,*5A
 """
+dJson = dict()
+dJson['name'] = basename
+dJson['check'] = fileCheck
+dJson['nmeaFilename'] = nmeaFilename
 
 dRMCs = dict()
 candidatVoulu = 'ZDA'
@@ -178,13 +182,14 @@ def getDtFromNmeaLine(line) :
     if (candidat == 'RMC') :
         lTmp = line.split(",")
         # $GPRMC,072648.00,A,4730.18648,N,00223.18287,W,0.049,46.36,010618,,,A*43
-        ts = float("20" + lTmp[9][4:6] + lTmp[9][2:4] + lTmp[9][0:2] + lTmp[1][0:2] + lTmp[1][2:4] + str(lTmp[1][4:]))
-        dt = datetime.datetime(2000 + int(lTmp[9][4:6]), int(lTmp[9][2:4]), int(lTmp[9][0:2]), int(lTmp[1][0:2]), int(lTmp[1][2:4]), int(lTmp[1][4:6]), int(lTmp[1][8:]))
+        ts = float("20" + lTmp[9][4:6] + lTmp[9][2:4] + lTmp[9][0:2] + lTmp[1][0:2] + lTmp[1][2:4] + lTmp[1][4:])
+        dt = datetime.datetime(2000 + int(lTmp[9][4:6]), int(lTmp[9][2:4]), int(lTmp[9][0:2]), int(lTmp[1][0:2]), int(lTmp[1][2:4]), int(lTmp[1][4:6]), int(lTmp[1][7:]))
         ep = (dt - dt1970).total_seconds()
         # print("epoch : [", ep, "]", file=sys.stderr)
         return (ts, dt, ep)
     if (candidat == 'ZDA') :
         lTmp = line.split(",")
+        # $IIZDA,121644,01,06,2018,,*57
         ts = float(lTmp[4] + lTmp[3] + lTmp[2] + lTmp[1][0:2] + lTmp[1][2:4] + lTmp[1][4:6])
         dt = datetime.datetime(int(lTmp[4]), int(lTmp[3]), int(lTmp[2]), int(lTmp[1][0:2]), int(lTmp[1][2:4]), int(lTmp[1][4:6]))
         ep = (dt - dt1970).total_seconds()
@@ -236,13 +241,13 @@ def xtrInfos(candidat, line, dP) :
         if (lTmp[6] == 'A') :
             dP[candidat] = str(float(lTmp[1])) + "," + lTmp[2] + "," + str(float(lTmp[3])) + "," + lTmp[4]
             if (lTmp[2] == 'S') :
-                dP['GLLlatNum'] = float("-" + lTmp[1])
+                dP['GLLlatNum'] = float("-" + lTmp[1]) / 100.0
             else :
-                dP['GLLlatNum'] = float(lTmp[1])
+                dP['GLLlatNum'] = float(lTmp[1]) / 100.0
             if (lTmp[4] == 'W') :
-                dP['GLLlonNum'] = float("-" + lTmp[3])
+                dP['GLLlonNum'] = float("-" + lTmp[3]) / 100.0
             else :
-                dP['GLLlonNum'] = float(lTmp[3])
+                dP['GLLlonNum'] = float(lTmp[3]) / 100.0
             return candidat + " = " +  dP[candidat] + " dans " + line
         else :
             return None
@@ -272,15 +277,26 @@ with open(nmeaFilename, 'r') as fNmea :
                     if (not ep + 1 in dPivots) :
                         # print("W:La clef " + str(ep) + " existe deja (L:" + str(nLineRaw) + ") pour dt:" + str(dt), file=sys.stderr)
                         ep += 1
-                        # TODO
                         # Ajouter 1 seconde a dt
                         dt = dt + datetime.timedelta(seconds = 1)
+                        # TODO
+                        # recalculer ts depuis dt          
+                        ##mTimeStruct = time.localtime(mTimeEpoch)
+                        ### print("mTimeStruct : " + str(mTimeStruct)) # mTimeLocal : time.struct_time(tm_year=2017, tm_mon=10, tm_mday=19, tm_hour=15, tm_min=40, tm_sec=11, tm_wday=3, tm_yday=292, tm_isdst=1)
+                        ##mTimeIso = time.strftime("%Y%m%d%H%M%S", mTimeStruct)
+                        ### print("mTimeIso : " + mTimeIso)
+                        ts = float(time.strftime("%Y%m%d%H%M%S", dt.timetuple()))
                     else :
                         # print("W:La clef " + str(ep) + " existe encore (L:" + str(nLineRaw) + ") pour dt:" + str(dt), file=sys.stderr)
                         ep += 1.1
                         # TODO
                         # Ajouter 1.1 seconde a dt
                         dt = dt + datetime.timedelta(seconds = 1, microseconds = 100000)
+                        # print("dt : ", dt, file=sys.stderr)
+                        # TODO
+                        # recalculer ts depuis dt   
+                        ts = float(time.strftime("%Y%m%d%H%M%S", dt.timetuple())) + 0.1
+                        # print("ts : ", ts, file=sys.stderr)
                         
                 if (ep != 0) :
                     dPivots[ep] = dict()
@@ -328,13 +344,13 @@ with open(nmeaFilename, 'r') as fNmea :
                         dRMCs[RMCep]['RMCLatLon'] = str(float(lTmp[3])) + "," + lTmp[4] + "," + str(float(lTmp[5])) + "," + lTmp[6]
                         # "RMCLatLon": "4730.27516,N,223.75845,W"
                         if (lTmp[4] == 'S') : 
-                            dRMCs[RMCep]['RMCLatNum'] = float("-" + lTmp[3])
+                            dRMCs[RMCep]['RMCLatNum'] = float("-" + lTmp[3]) / 100.0
                         else :
-                            dRMCs[RMCep]['RMCLatNum'] = float(lTmp[3])
+                            dRMCs[RMCep]['RMCLatNum'] = float(lTmp[3]) / 100.0
                         if (lTmp[6] == 'W') : 
-                            dRMCs[RMCep]['RMCLonNum'] = float("-" + lTmp[5])
+                            dRMCs[RMCep]['RMCLonNum'] = float("-" + lTmp[5]) / 100.0
                         else :
-                            dRMCs[RMCep]['RMCLonNum'] = float(lTmp[5])
+                            dRMCs[RMCep]['RMCLonNum'] = float(lTmp[5]) / 100.0
 
 
 
@@ -343,9 +359,10 @@ for (RMCep, v) in dRMCs.items() :
     # print("RMCep : ", RMCep, "\t", v, file=sys.stderr)
     if (RMCep not in dPivots) :
         dPivots[RMCep] = dict()
-        print("RMCep NOT in lKeys_dPivots ", RMCep, file=sys.stderr)
+        # print("RMCep NOT in lKeys_dPivots ", RMCep, file=sys.stderr)
         # print(RMCep, dPivots[RMCep]['GLL'], dPivots[RMCep]['RMCLatLon'], file=sys.stderr)
     # dPivots[RMCep]['RMCdt'] = dRMCs[RMCep]['RMCdt']
+    dPivots[RMCep]['ts']        = dRMCs[RMCep]['ts']
     dPivots[RMCep]['RMCLatLon'] = dRMCs[RMCep]['RMCLatLon']
     dPivots[RMCep]['RMCLatNum'] = dRMCs[RMCep]['RMCLatNum']
     dPivots[RMCep]['RMCLonNum'] = dRMCs[RMCep]['RMCLonNum']
@@ -366,7 +383,9 @@ f = open(nmeaFilename + ".yaml", 'w')
 yaml.dump(dPivotsSorted, f)    
 f.close()
 f = open(nmeaFilename + ".json", 'w')
-json.dump(dPivotsSorted, f, indent=2, separators=(", ", ": "))   
+dJson['datas'] = dPivotsSorted
+# json.dump(dPivotsSorted, f, indent=2, separators=(", ", ": "))
+json.dump(dJson, f, indent=2, separators=(", ", ": "))  
 f.close()
 quit()
 
