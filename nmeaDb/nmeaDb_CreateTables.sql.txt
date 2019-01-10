@@ -1,8 +1,12 @@
 -- 
-
+-- v2.0.0 sqlite
+-- Stockage du flux apres operation de pivot
 -- 
-DROP TABLE IF EXISTS nmeaFiles;
-CREATE TABLE nmeaFiles (
+
+-- NmeaFiles
+-- Informations relatives aux fichier nmea importes.
+DROP TABLE IF EXISTS NmeaFiles;
+CREATE TABLE NmeaFiles (
 	FileID integer primary key autoincrement,
 	FileName text not null,
 	FileCheck text,
@@ -10,23 +14,57 @@ CREATE TABLE nmeaFiles (
 	FileTsImport timestamp
 );
 
--- 
-DROP TABLE IF EXISTS nmeaValues;
-CREATE TABLE nmeaValues (
-	FileID integer NOT NULL,
-	FileLineNum integer NOT NULL,
-	NmeaID text,
-	NmeaVal text
-);
 
--- 
-DROP TABLE IF EXISTS nmeaTraces;
-CREATE TABLE nmeaTraces (
-	FileId integer NOT NULL,
+-- NmeaTraces
+-- Informations connexes aux fichiers
+DROP TABLE IF EXISTS NmeaTraces;
+CREATE TABLE NmeaTraces (
+	FileID integer NOT NULL,
 	TraceName text NOT NULL,
 	LineStart integer,
 	LineStop integer,
 	TraceInfo text
 );
 
--- 
+-- NmeaValues
+-- Fichiers importes brutes, lignes commentaires incluses
+DROP TABLE IF EXISTS NmeaValues;
+CREATE TABLE NmeaValues (
+	FileID integer NOT NULL,
+	FileLineNum integer NOT NULL,
+	NmeaID text,
+	NmeaVal text
+);
+
+-- NmeaPivot
+-- Fichiers importes apres operations de pivot.
+-- version pour ancienne interface NKE (ref. )
+DROP TABLE IF EXISTS NmeaPivot;
+CREATE TABLE NmeaPivot (
+	FileID integer NOT NULL,
+	epoch numeric NOT NULL,
+	ts	numeric,
+	RMC text,
+	RMClatNum numeric,
+	RMClonNum numeric,
+	GLL text,
+	GLLlatNum numeric,
+	GLLlonNum numeric,
+	DBT numeric,
+	VLW numeric,
+	VLWtotal numeric,
+	VHW numeric,
+	VWRrl text,
+	VWRawa numeric,
+	VWRaws numeric,
+	MWDtwd numeric,
+	MWDtws numeric,
+	MTA numeric,
+	MTW numeric,
+	VWTrl text,
+	VWTtwa numeric,
+	VWTtws numeric,
+	HDM numeric, 
+	primary key(epoch)
+);
+

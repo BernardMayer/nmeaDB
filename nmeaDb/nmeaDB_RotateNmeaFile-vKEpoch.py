@@ -143,6 +143,7 @@ $IIZDA	152520,07,07,2017,,*5A
 dJson = dict()
 dJson['name'] = basename
 dJson['check'] = fileCheck
+dJson['mTime'] = mTimeIso
 dJson['nmeaFilename'] = nmeaFilename
 
 dRMCs = dict()
