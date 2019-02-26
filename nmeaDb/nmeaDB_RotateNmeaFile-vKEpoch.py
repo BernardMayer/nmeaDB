@@ -182,7 +182,7 @@ def DMd2Dd(dmd) :
     # 10601.6986 ---> 106+1.6986/60 = 106.02831 degrees
     # "GLL": "4730.189,N,223.183,W"
     dotPos = dmd.find(".")
-    D = dmd[0:dotPos - 2]
+    D = float(dmd[0:dotPos - 2])
     M = float(dmd[dotPos - 2:]) / 60
     return (D + M)
 
@@ -252,13 +252,13 @@ def xtrInfos(candidat, line, dP) :
         if (lTmp[6] == 'A') :
             dP[candidat] = str(float(lTmp[1])) + "," + lTmp[2] + "," + str(float(lTmp[3])) + "," + lTmp[4]
             if (lTmp[2] == 'S') :
-                dP['GLLlatNum'] = float("-" + lTmp[1]) / 100.0
+                dP['GLLlatNum'] = DMd2Dd("-" + lTmp[1]) #float("-" + lTmp[1]) / 100.0
             else :
-                dP['GLLlatNum'] = float(lTmp[1]) / 100.0
+                dP['GLLlatNum'] = DMd2Dd(lTmp[1]) #float(lTmp[1]) / 100.0
             if (lTmp[4] == 'W') :
-                dP['GLLlonNum'] = float("-" + lTmp[3]) / 100.0
+                dP['GLLlonNum'] = DMd2Dd("-" + lTmp[3]) #float("-" + lTmp[3]) / 100.0
             else :
-                dP['GLLlonNum'] = float(lTmp[3]) / 100.0
+                dP['GLLlonNum'] = DMd2Dd(lTmp[3]) #float(lTmp[3]) / 100.0
             return candidat + " = " +  dP[candidat] + " dans " + line
         else :
             return None
@@ -355,13 +355,13 @@ with open(nmeaFilename, 'r') as fNmea :
                         dRMCs[RMCep]['RMCLatLon'] = str(float(lTmp[3])) + "," + lTmp[4] + "," + str(float(lTmp[5])) + "," + lTmp[6]
                         # "RMCLatLon": "4730.27516,N,223.75845,W"
                         if (lTmp[4] == 'S') : 
-                            dRMCs[RMCep]['RMCLatNum'] = float("-" + lTmp[3]) / 100.0
+                            dRMCs[RMCep]['RMCLatNum'] = DMd2Dd("-" + lTmp[3]) #float("-" + lTmp[3]) / 100.0
                         else :
-                            dRMCs[RMCep]['RMCLatNum'] = float(lTmp[3]) / 100.0
+                            dRMCs[RMCep]['RMCLatNum'] = DMd2Dd(lTmp[3]) #float(lTmp[3]) / 100.0
                         if (lTmp[6] == 'W') : 
-                            dRMCs[RMCep]['RMCLonNum'] = float("-" + lTmp[5]) / 100.0
+                            dRMCs[RMCep]['RMCLonNum'] = DMd2Dd(("-" + lTmp[5])) #float("-" + lTmp[5]) / 100.0
                         else :
-                            dRMCs[RMCep]['RMCLonNum'] = float(lTmp[5]) / 100.0
+                            dRMCs[RMCep]['RMCLonNum'] = DMd2Dd(lTmp[5]) #float(lTmp[5]) / 100.0
 
 
 
