@@ -177,6 +177,15 @@ dPivot['RMClatlon'] = ""
 dPivot['RMClatNum'] = 0.0
 dPivot['RMClonNum'] = 0.0
 
+def DMd2Dd(dmd) :
+    # DDDMM.d --> DDD.d (S or W negative values)
+    # 10601.6986 ---> 106+1.6986/60 = 106.02831 degrees
+    # "GLL": "4730.189,N,223.183,W"
+    dotPos = dmd.find(".")
+    D = dmd[0:dotPos - 2]
+    M = float(dmd[dotPos - 2:]) / 60
+    return (D + M)
+
 def getDtFromNmeaLine(line) :
     global dt1970
     candidat = line[3:6]
@@ -239,6 +248,7 @@ def xtrInfos(candidat, line, dP) :
         dP[candidat] = float(lTmp[1])
         return candidat + " = " + lTmp[1] + " dans " + line
     if (candidat == 'GLL') :
+        # $GPGLL,4740.2898,N,00321.2259,W,083718,A,A*50
         if (lTmp[6] == 'A') :
             dP[candidat] = str(float(lTmp[1])) + "," + lTmp[2] + "," + str(float(lTmp[3])) + "," + lTmp[4]
             if (lTmp[2] == 'S') :
