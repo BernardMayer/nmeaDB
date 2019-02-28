@@ -67,4 +67,33 @@ CREATE TABLE NmeaPivot (
 	HDM numeric, 
 	primary key(epoch)
 );
+/*
+dPivot['ts'] = 0.0
+dPivot['lat'] = 0.0
+dPivot['lon'] = 0.0
+# dPivot['ZDAepoch'] = 0
+dPivot['GLL'] = ""
+dPivot['GLLlatNum'] = 0.0
+dPivot['GLLlonNum'] = 0.0
+dPivot['RMCts'] = 0
+# dPivot['RMCep'] = 0
+dPivot['RMClatlon'] = ""
+dPivot['RMClatNum'] = 0.0
+dPivot['RMClonNum'] = 0.0
+dPivot['VHW'] = 0.0
+dPivot['VLW'] = 0.0
+dPivot['VLWtotal'] = 0.0
+dPivot['DBT'] = 0.0
+dPivot['MTW'] = 0.0
+dPivot['VWRrl'] = ""
+dPivot['VWRawa'] = 0.0
+dPivot['VWRaws'] = 0.0
+dPivot['MWDtws'] = 0.0
+dPivot['MWDtwd'] = 0.0
+dPivot['VWTrl'] = ""
+dPivot['VWTtwa'] = 0.0
+dPivot['VWTtws'] = 0.0
+dPivot['MTA'] = 0.0
+dPivot['HDM'] = 0.0
+*/
 

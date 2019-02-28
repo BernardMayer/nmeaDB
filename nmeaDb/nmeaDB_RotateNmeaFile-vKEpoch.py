@@ -16,6 +16,9 @@ liste ordonnee (clef = timestamp) de
 structure des informations dispo entre 2 timestamps
 """
 
+# Pour calcul de distance...
+from math import sin, cos, acos, pi
+
 import cgitb
 cgitb.enable(format='text')
 import pyodbc
@@ -45,11 +48,14 @@ TAB = '\t'
 FileOutSep = TAB
 FileOutHeader = False
 Verbose = True
-LatLonPrefered = "RMC"
 #dIni['verbose'] = Verbose
 dtNow  = datetime.datetime.today()
 tsNow = dtNow.timestamp()
 dt1970 = datetime.datetime(1970, 1, 1)
+
+
+# LatLonPrefered = "RMC"
+LatLonPrefered = "GLL"
 
 
 #bShowIdentifier = os.getenv("dsXidentifier", False)
@@ -152,42 +158,89 @@ candidatVoulu = 'ZDA'
 dPivots = dict()
 dPivotsSorted = collections.OrderedDict()
 dPivot = dict()
-dPivot['ts'] = 0.0
-dPivot['lat'] = 0.0
-dPivot['lon'] = 0.0
-# dPivot['ZDAepoch'] = 0
-dPivot['GLL'] = ""
-dPivot['GLLlatNum'] = 0.0
-dPivot['GLLlonNum'] = 0.0
-dPivot['RMCts'] = 0
-# dPivot['RMCep'] = 0
-dPivot['RMClatlon'] = ""
-dPivot['RMClatNum'] = 0.0
-dPivot['RMClonNum'] = 0.0
-dPivot['VHW'] = 0.0
-dPivot['VLW'] = 0.0
-dPivot['VLWtotal'] = 0.0
-dPivot['DBT'] = 0.0
-dPivot['MTW'] = 0.0
-dPivot['VWRrl'] = ""
-dPivot['VWRawa'] = 0.0
-dPivot['VWRaws'] = 0.0
-dPivot['MWDtws'] = 0.0
-dPivot['MWDtwd'] = 0.0
-dPivot['VWTrl'] = ""
-dPivot['VWTtwa'] = 0.0
-dPivot['VWTtws'] = 0.0
-dPivot['MTA'] = 0.0
-dPivot['HDM'] = 0.0
+dPivot['ts'] = None #0.0
+dPivot['lat'] = None #0.0
+dPivot['lon'] = None #0.0
+dPivot['d-1'] = None #0
+dPivot['d+10'] = None #0
+dPivot['d+60'] = None #0
+# dPivot['ZDAepoch'] = None #0
+dPivot['GLL'] = None #""
+dPivot['GLLlatNum'] = None #0.0
+dPivot['GLLlonNum'] = None #0.0
+dPivot['RMCts'] = None #0
+# dPivot['RMCep'] = None #0
+dPivot['RMClatlon'] = None #""
+dPivot['RMClatNum'] = None #0.0
+dPivot['RMClonNum'] = None #0.0
+dPivot['VHW'] = None #0.0
+dPivot['VLW'] = None #0.0
+dPivot['VLWtotal'] = None #0.0
+dPivot['DBT'] = None #0.0
+dPivot['MTW'] = None #0.0
+dPivot['VWRrl'] = None #""
+dPivot['VWRawa'] = None #0.0
+dPivot['VWRaws'] = None #0.0
+dPivot['MWDtws'] = None #0.0
+dPivot['MWDtwd'] = None #0.0
+dPivot['VWTrl'] = None #""
+dPivot['VWTtwa'] = None #0.0
+dPivot['VWTtws'] = None #0.0
+dPivot['MTA'] = None #0.0
+dPivot['HDM'] = None #0.0
+
+#############################################################################
+def dms2dd(d, m, s):
+    """Convertit un angle "degrés minutes secondes" en "degrés décimaux"
+    """
+    return d + m/60 + s/3600
+ 
+#############################################################################
+def dd2dms(dd):
+    """Convertit un angle "degrés décimaux" en "degrés minutes secondes"
+    """
+    d = int(dd)
+    x = (dd-d)*60
+    m = int(x)
+    s = (x-m)*60
+    return d, m, s
+ 
+#############################################################################
+def deg2rad(dd):
+    """Convertit un angle "degrés décimaux" en "radians"
+    """
+    return dd/180*pi
+ 
+#############################################################################
+def rad2deg(rd):
+    """Convertit un angle "radians" en "degrés décimaux"
+    """
+    return rd/pi*180
+ 
+#############################################################################
+def distanceGPS(latA, longA, latB, longB):
+    """Retourne la distance en mètres entre les 2 points A et B connus grâce à
+       leurs coordonnées GPS (en radians).
+    """
+    # Rayon de la terre en mètres (sphère IAG-GRS80) WGS84
+    RT = 6378137
+    # angle en radians entre les 2 points
+    S = acos(sin(latA)*sin(latB) + cos(latA)*cos(latB)*cos(abs(longB-longA)))
+    # distance entre les 2 points, comptée sur un arc de grand cercle
+    return S * RT
+ 
+#############################################################################
 
 def DMd2Dd(dmd) :
     # DDDMM.d --> DDD.d (S or W negative values)
     # 10601.6986 ---> 106+1.6986/60 = 106.02831 degrees
     # "GLL": "4730.189,N,223.183,W"
+    # 0.001 represente 110m x 78m (lat 45°)
+    # 0.0001 represente 11m x 7/8m
     dotPos = dmd.find(".")
     D = float(dmd[0:dotPos - 2])
     M = float(dmd[dotPos - 2:]) / 60
-    return (round(D + M, 5))
+    return (round(D + M, 6))
 
 def getDtFromNmeaLine(line) :
     global dt1970
@@ -324,10 +377,15 @@ with open(nmeaFilename, 'r') as fNmea :
                 # Fonction generique de traitement du candidat
                 if (ep != 0) :
                     retCode = xtrInfos(candidat, line, dPivots[ep])
-                    """if (retCode is None) :
-                        print("? ? ? :", line, file=sys.stderr)
+                    if (retCode is None) :
+                        print("Traitement non prevu pour candidat :", line, file=sys.stderr)
+                        # TODO
+                        
+                        
+                        
                     else :
-                        print("retCode :", retCode, file=sys.stderr)"""
+                        pass
+                        #print("retCode :", retCode, file=sys.stderr)
                 # TODO
                 # RMC ?
                 if (candidat == 'RMC') :
@@ -367,7 +425,10 @@ with open(nmeaFilename, 'r') as fNmea :
                             dRMCs[RMCep]['RMClonNum'] = DMd2Dd(("-" + lTmp[5])) #float("-" + lTmp[5]) / 100.0
                         else :
                             dRMCs[RMCep]['RMClonNum'] = DMd2Dd(lTmp[5]) #float(lTmp[5]) / 100.0
-
+        else :
+            pass 
+            # TODO
+            # Commentaire ou phrase non attendue
 
 
 
@@ -393,12 +454,21 @@ for (RMCep, v) in dRMCs.items() :
 for k in sorted(dPivots) :
     dPivotsSorted[k] = dPivots[k]
     
+# Enumeration des clefs...
+"""
+# https://stackoverflow.com/questions/28035490/in-python-how-can-i-get-the-next-and-previous-keyvalue-of-a-particular-key-in
+keyList=sorted(dPivotsSorted.keys())
+for i,v in enumerate(keyList):
+    if v=='eeee':
+        print dPivotsSorted[keyList[i + 1]]
+        print dPivotsSorted[keyList[i - 1]]
+"""
+latPre = lonPre = None
 for (k, v) in dPivotsSorted.items() :
-    pass
- # k :  1527848620.0 	 {'ts': 20180601102340.0, 'lat': 47.42905, 'lon': -1.37533, 'GLL': '4725.743,N,237.48,W', 'GLLlatNum': 47.42905, 'GLLlonNum': -1.37533, 'RMCts': 0, 'RMClatlon': '', 'RMClatNum': 0.0, 'RMClonNum': 0.0, 'VHW': 5.44, 'VLW': 48.47, 'VLWtotal': 147.0, 'DBT': 11.4, 'MTW': 20.1, 'VWRrl': 'R', 'VWRawa': 45.0, 'VWRaws': 12.2, 'MWDtws': 9.1, 'MWDtwd': 288.0, 'VWTrl': 'R', 'VWTtwa': 70.0, 'VWTtws': 9.1, 'MTA': 20.5, 'HDM': 217.0}
- # k :  1527848621.0 	 {'ts': 20180601102341.0, 'lat': 47.42904, 'lon': -1.37531, 'GLL': '', 'GLLlatNum': 0.0, 'GLLlonNum': 0.0, 'RMCts': 0, 'RMClatlon': '4725.7423,N,237.48156,W', 'RMClatNum': 47.42904, 'RMClonNum': -1.37531, 'VHW': 0.0, 'VLW': 0.0, 'VLWtotal': 0.0, 'DBT': 0.0, 'MTW': 0.0, 'VWRrl': '', 'VWRawa': 0.0, 'VWRaws': 0.0, 'MWDtws': 0.0, 'MWDtwd': 0.0, 'VWTrl': '', 'VWTtwa': 0.0, 'VWTtws': 0.0, 'MTA': 0.0, 'HDM': 0.0}
+    # k :  1527848620.0 	 {'ts': 20180601102340.0, 'lat': 47.42905, 'lon': -1.37533, 'GLL': '4725.743,N,237.48,W', 'GLLlatNum': 47.42905, 'GLLlonNum': -1.37533, 'RMCts': 0, 'RMClatlon': '', 'RMClatNum': 0.0, 'RMClonNum': 0.0, 'VHW': 5.44, 'VLW': 48.47, 'VLWtotal': 147.0, 'DBT': 11.4, 'MTW': 20.1, 'VWRrl': 'R', 'VWRawa': 45.0, 'VWRaws': 12.2, 'MWDtws': 9.1, 'MWDtwd': 288.0, 'VWTrl': 'R', 'VWTtwa': 70.0, 'VWTtws': 9.1, 'MTA': 20.5, 'HDM': 217.0}
+    # k :  1527848621.0 	 {'ts': 20180601102341.0, 'lat': 47.42904, 'lon': -1.37531, 'GLL': '', 'GLLlatNum': 0.0, 'GLLlonNum': 0.0, 'RMCts': 0, 'RMClatlon': '4725.7423,N,237.48156,W', 'RMClatNum': 47.42904, 'RMClonNum': -1.37531, 'VHW': 0.0, 'VLW': 0.0, 'VLWtotal': 0.0, 'DBT': 0.0, 'MTW': 0.0, 'VWRrl': '', 'VWRawa': 0.0, 'VWRaws': 0.0, 'MWDtws': 0.0, 'MWDtwd': 0.0, 'VWTrl': '', 'VWTtwa': 0.0, 'VWTtws': 0.0, 'MTA': 0.0, 'HDM': 0.0}
     # ! Attention aux clefs absentes ! #and 'GLLlatNum' in dPivotsSorted[k] ou dict.get(<clef>, <val par defaut>)
-    if (dPivotsSorted[k]['RMClatNum'] != 0.0  and dPivotsSorted[k]['GLLlatNum'] != 0.0) :    
+    if (not dPivotsSorted[k]['RMClatNum'] is None and not dPivotsSorted[k]['GLLlatNum'] is None) :    
         if (LatLonPrefered == "GLL") :
             dPivotsSorted[k]['lat'] = dPivotsSorted[k]['GLLlatNum']
             dPivotsSorted[k]['lon'] = dPivotsSorted[k]['GLLlonNum']
@@ -406,19 +476,86 @@ for (k, v) in dPivotsSorted.items() :
             dPivotsSorted[k]['lat'] = dPivotsSorted[k]['RMClatNum']
             dPivotsSorted[k]['lon'] = dPivotsSorted[k]['RMClonNum']
         # DEBUG
-        print("2 k : ", k, "\t", v)
+        # print("2 k : ", k, "\t", v)
     else :
-        if (dPivotsSorted[k]['RMClatNum'] != 0.0) :
+        if (not dPivotsSorted[k]['RMClatNum'] is None) :
             dPivotsSorted[k]['lat'] = dPivotsSorted[k]['RMClatNum']
             dPivotsSorted[k]['lon'] = dPivotsSorted[k]['RMClonNum']
             # DEBUG
-            print("r k : ", k, "\t", v)
-        elif (dPivotsSorted[k]['GLLlatNum'] != 0.0) :
+            # print("r k : ", k, "\t", v)
+        elif (not dPivotsSorted[k]['GLLlatNum'] is None) :
             dPivotsSorted[k]['lat'] = dPivotsSorted[k]['GLLlatNum']
             dPivotsSorted[k]['lon'] = dPivotsSorted[k]['GLLlonNum']
             # DEBUG
-            print("g k : ", k, "\t", v)
+            # print("g k : ", k, "\t", v)
+    
+    # Calcul de distance avec le point -1
+    #print("dist", dPivotsSorted[k]['lat'], dPivotsSorted[k]['lon'], latPre, lonPre, " En Rad", deg2rad(dPivotsSorted[k]['lat']), deg2rad(dPivotsSorted[k]['lon']), deg2rad(latPre), deg2rad(lonPre) )
+    if (not latPre is None and not lonPre is None and not dPivotsSorted[k]['lat'] is None and not dPivotsSorted[k]['lon'] is None) :
+        if (latPre != dPivotsSorted[k]['lat'] and lonPre != dPivotsSorted[k]['lon']) :
+            # 
+            dPivotsSorted[k]['d-1'] = round(distanceGPS(\
+                deg2rad(dPivotsSorted[k]['lat']), \
+                deg2rad(dPivotsSorted[k]['lon']), \
+                deg2rad(latPre), \
+                deg2rad(lonPre) \
+                ), 0 \
+            )
+            latPre = dPivotsSorted[k]['lat']
+            lonPre = dPivotsSorted[k]['lon']
+        else :
+            dPivotsSorted[k]['d-1'] = 0
+        #print("distance : ", dPivotsSorted[k]['d-1']
+    else :
+        if (latPre is None) :
+            latPre = dPivotsSorted[k]['lat']
+        if (lonPre is None) : 
+            lonPre = dPivotsSorted[k]['lon']
+        
+        
+        
 
+    
+  
+# Calcul de distance avec le point + 10 ou autres...
+# i est un entier entre 0 et ...
+latPre = lonPre = None
+keyList = sorted(dPivotsSorted.keys())
+for i,v in enumerate(keyList) :
+    #print("i", i)
+    # dPivotsSorted[keyList[i + 1]]
+    k = keyList[i]
+    # les -10 premiers kPre sont > aux k, car c'est l'autre bout de la liste :-)
+    kPre = keyList[i - 10]
+
+    #print("i", i, "k", k, "kPre", kPre, " ", dPivotsSorted[k])
+    
+    if (i >= 10 and not latPre is None and not lonPre is None and not dPivotsSorted[k]['lat'] is None and not dPivotsSorted[k]['lon'] is None) :
+        if (latPre != dPivotsSorted[k]['lat'] and lonPre != dPivotsSorted[k]['lon']) :
+            # 
+            dPivotsSorted[k]['d+10'] = round(distanceGPS(\
+                deg2rad(dPivotsSorted[k]['lat']), \
+                deg2rad(dPivotsSorted[k]['lon']), \
+                deg2rad(latPre), \
+                deg2rad(lonPre) \
+                ), 0 \
+            )
+            latPre = dPivotsSorted[kPre]['lat']
+            lonPre = dPivotsSorted[kPre]['lon']
+            #print("distance : ", dPivotsSorted[k]['d-1']
+        else :
+            dPivotsSorted[k]['d+10'] = 0
+    else :
+        if (latPre is None) :
+            latPre = dPivotsSorted[kPre]['lat']
+        if (lonPre is None) : 
+            lonPre = dPivotsSorted[kPre]['lon']   
+    
+    print("i", i, "k", k, "kPre", kPre, " ", dPivotsSorted[k])
+  
+    
+    
+    
     
 # print(yaml.dump(dPivotsSorted))
 
