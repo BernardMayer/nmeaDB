@@ -45,6 +45,7 @@ TAB = '\t'
 FileOutSep = TAB
 FileOutHeader = False
 Verbose = True
+LatLonPrefered = "RMC"
 #dIni['verbose'] = Verbose
 dtNow  = datetime.datetime.today()
 tsNow = dtNow.timestamp()
@@ -152,6 +153,8 @@ dPivots = dict()
 dPivotsSorted = collections.OrderedDict()
 dPivot = dict()
 dPivot['ts'] = 0.0
+dPivot['lat'] = 0.0
+dPivot['lon'] = 0.0
 # dPivot['ZDAepoch'] = 0
 dPivot['VHW'] = 0.0
 dPivot['VLW'] = 0.0
@@ -312,6 +315,34 @@ with open(nmeaFilename, 'r') as fNmea :
                 if (ep != 0) :
                     dPivots[ep] = dict()
                     dPivots[ep]['ts'] = ts
+                    dPivots[ep]['lat'] = 0.0
+                    dPivots[ep]['lon'] = 0.0
+                    # dPivot['ZDAepoch'] = 0
+                    dPivot['VHW'] = 0.0
+                    dPivot['VLW'] = 0.0
+                    dPivot['VLWtotal'] = 0.0
+                    dPivot['DBT'] = 0.0
+                    dPivot['MTW'] = 0.0
+                    dPivot['VWRrl'] = ""
+                    dPivot['VWRawa'] = 0.0
+                    dPivot['VWRaws'] = 0.0
+                    dPivot['MWDtws'] = 0.0
+                    dPivot['MWDtwd'] = 0.0
+                    dPivot['VWTrl'] = ""
+                    dPivot['VWTtwa'] = 0.0
+                    dPivot['VWTtws'] = 0.0
+                    dPivot['MTA'] = 0.0
+                    dPivot['HDM'] = 0.0
+                    dPivot['GLL'] = ""
+                    dPivot['GLLlatNum'] = 0.0
+                    dPivot['GLLlonNum'] = 0.0
+                    dPivot['RMCts'] = 0
+                    # dPivot['RMCep'] = 0
+                    dPivot['RMClatlon'] = ""
+                    dPivot['RMClatNum'] = 0.0
+                    dPivot['RMClonNum'] = 0.0
+
+                    
                     ##  JSON ne digere pas les datetime...
                     # dPivots[ep]['dt'] = dt
                     # dPivots[ep]['nLineRaw'] = nLineRaw
@@ -355,13 +386,13 @@ with open(nmeaFilename, 'r') as fNmea :
                         dRMCs[RMCep]['RMCLatLon'] = str(float(lTmp[3])) + "," + lTmp[4] + "," + str(float(lTmp[5])) + "," + lTmp[6]
                         # "RMCLatLon": "4730.27516,N,223.75845,W"
                         if (lTmp[4] == 'S') : 
-                            dRMCs[RMCep]['RMCLatNum'] = DMd2Dd("-" + lTmp[3]) #float("-" + lTmp[3]) / 100.0
+                            dRMCs[RMCep]['RMClatNum'] = DMd2Dd("-" + lTmp[3]) #float("-" + lTmp[3]) / 100.0
                         else :
-                            dRMCs[RMCep]['RMCLatNum'] = DMd2Dd(lTmp[3]) #float(lTmp[3]) / 100.0
+                            dRMCs[RMCep]['RMClatNum'] = DMd2Dd(lTmp[3]) #float(lTmp[3]) / 100.0
                         if (lTmp[6] == 'W') : 
-                            dRMCs[RMCep]['RMCLonNum'] = DMd2Dd(("-" + lTmp[5])) #float("-" + lTmp[5]) / 100.0
+                            dRMCs[RMCep]['RMClonNum'] = DMd2Dd(("-" + lTmp[5])) #float("-" + lTmp[5]) / 100.0
                         else :
-                            dRMCs[RMCep]['RMCLonNum'] = DMd2Dd(lTmp[5]) #float(lTmp[5]) / 100.0
+                            dRMCs[RMCep]['RMClonNum'] = DMd2Dd(lTmp[5]) #float(lTmp[5]) / 100.0
 
 
 
@@ -371,14 +402,17 @@ for (RMCep, v) in dRMCs.items() :
     if (RMCep not in dPivots) :
         dPivots[RMCep] = dict()
         # print("RMCep NOT in lKeys_dPivots ", RMCep, file=sys.stderr)
-        # print(RMCep, dPivots[RMCep]['GLL'], dPivots[RMCep]['RMCLatLon'], file=sys.stderr)
-    # dPivots[RMCep]['RMCdt'] = dRMCs[RMCep]['RMCdt']
-    dPivots[RMCep]['ts']        = dRMCs[RMCep]['ts']
-    dPivots[RMCep]['RMCLatLon'] = dRMCs[RMCep]['RMCLatLon']
-    dPivots[RMCep]['RMCLatNum'] = dRMCs[RMCep]['RMCLatNum']
-    dPivots[RMCep]['RMCLonNum'] = dRMCs[RMCep]['RMCLonNum']
-
-
+        # print(RMCep, dPivots[RMCep]['GLL'], dPivots[RMCep]['RMClatLon'], file=sys.stderr)
+        # dPivots[RMCep]['RMCdt'] = dRMCs[RMCep]['RMCdt']
+        dPivots[RMCep]['ts']  = dRMCs[RMCep]['ts']   
+        dPivots[RMCep]['lat'] = dRMCs[RMCep]['RMClatNum']
+        dPivots[RMCep]['lon'] = dRMCs[RMCep]['RMClonNum']
+        dPivots[RMCep]['RMCLatLon'] = dRMCs[RMCep]['RMCLatLon']
+        dPivots[RMCep]['RMClatNum'] = dRMCs[RMCep]['RMClatNum']
+        dPivots[RMCep]['RMClonNum'] = dRMCs[RMCep]['RMClonNum']
+    
+        
+       
 # lKeys_dPivotsSorted = sorted(dPivots)
 # print(lKeys_dPivotsSorted, file=sys.stderr)
 for k in sorted(dPivots) :
@@ -387,7 +421,24 @@ for k in sorted(dPivots) :
 for (k, v) in dPivotsSorted.items() :
     pass
     print("k : ", k, "\t", v)
-
+    # k :  1527837968.0 	 {'ts': 20180601072608.0, 'DBT': 4.8, 'VLW': 36.73, 'VLWtotal': 135.0, 'VHW': 0.0, 'VWRrl': 'L', 'VWRawa': -107.0, 'VWRaws': 2.4, 'MTA': 18.9, 'MTW': 19.7, 'VWTrl': 'L', 'VWTtwa': -107.0, 'VWTtws': 2.4, 'HDM': 325.0, 'GLL': '4730.189,N,223.183,W', 'GLLlatNum': 47.50315, 'GLLlonNum': -1.6136166666666667, 'RMCLatLon': '4730.18753,N,223.18348,W', 'RMClatNum': 47.5031255, 'RMClonNum': -1.6136086666666667}
+    #  'GLLlonNum': -1.6136166666666667, 'RMClatNum': 47.5031255, 
+    
+    if (dPivotsSorted[k]['RMClatNum'] != 0.0 and dPivotsSorted[k]['GLLlatNum'] != 0.0) :    
+        if (LatLonPrefered == "GLL") :
+            dPivotsSorted[k]['lat'] = dPivotsSorted[k]['GLLlatNum']
+            dPivotsSorted[k]['lon'] = dPivotsSorted[k]['GLLlonNum']
+        else :
+            dPivotsSorted[k]['lat'] = dPivotsSorted[k]['RMClatNum']
+            dPivotsSorted[k]['lon'] = dPivotsSorted[k]['RMClonNum']
+    else :
+        if (dPivotsSorted[k]['RMClatNum'] != 0.0) :
+            dPivotsSorted[k]['lat'] = dPivotsSorted[k]['RMClatNum']
+            dPivotsSorted[k]['lon'] = dPivotsSorted[k]['RMClonNum']
+        elif (dPivotsSorted[k]['GLLlatNum'] != 0.0) :
+            dPivotsSorted[k]['lat'] = dPivotsSorted[k]['GLLlatNum']
+            dPivotsSorted[k]['lon'] = dPivotsSorted[k]['GLLlonNum']
+    
 # print(yaml.dump(dPivotsSorted))
 
 f = open(nmeaFilename + ".yaml", 'w')
