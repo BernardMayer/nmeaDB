@@ -33,9 +33,38 @@ DMS 0 0 1
 DM.m 0 0.016666666666667
 D.d 0.00027777777777778
 The formulas are as follows:
-Degrees Minutes Seconds to Degrees Minutes.m
-Degrees = Degrees
-Minutes.m = Minutes + (Seconds / 60)
-Degrees Minutes.m to Decimal Degrees
-.d = M.m / 60
-Decimal Degrees = Degrees + .d
+	Degrees Minutes Seconds to Degrees Minutes.m
+	Degrees = Degrees
+	Minutes.m = Minutes + (Seconds / 60)
+	Degrees Minutes.m to Decimal Degrees
+	.d = M.m / 60
+	Decimal Degrees = Degrees + .d
+https://www.raspberrypi.org/forums/viewtopic.php?t=175163
+
+Lat : 3137.36664 becomes 31 degrees and 37.26664 seconds = 31 + 37.36664/60 = 31.6227773
+Lon : 00212.21149 becomes 2 degrees and 12.21149 seconds = 2 + 12.21149/60 = 2.20352483
+
+So as latitude is in format DDSS.SSSSS
+DD = int(float(Lat)/100) = int(3137.36664/100) = int(31.3736664) = 31
+SS = float(lat) - DD * 100 = 3137.36664 - 31 * 100 = 3137.36664 - 3100 = 37.36664
+
+LatDec = DD + SS/60 = 31 + 37.36664/60 = 31 + 0.6227773333333333 = 31.6227773333333333
+
+Don't forget that data[4] will be your North/South indicator, i.e. "S" or "N".
+If this is "S" you need to negate your LatDec value.
+
+The processing for the longitude will be very similar. This time data[6] will be your East/West indicator. So negate if "W".
+
+
+https://www.experts-exchange.com/questions/22112629/Converting-NMEA-sentence-Latitude-and-Longitude-to-Decimal-Degrees.html
+
+Converting NMEA sentence Latitude and Longitude to Decimal Degrees
+I see answers post all over the internet for this question. But it seems that people disagree on one issue.
+Is the latitude and longitude in an NMEA sentence stored in DegreesMinutes.Minutes (dm.m) or is it in DegreesMinutes.Seconds (dm.s)? Or, worse yet, is it in DegreesMinutes.MinutesSeconds (dm.ms)?
+$GPRMC,182807.036,A,3731.9404,N,10601.6986,W,0.078542,40.74,050107,,*20
+$GPGGA,182808.036,3731.9404,N,10601.6992,W,2,05,2.2,2312.7,M,-20.6,M,4.7,0000*7A
+I've tried converting the coordinates listed above so I can get the correct location on MS Streets & Trips but I always land up a few miles off. 
+
+as in your example the Exact Lat,Long (In degrees) this location refers to is
+3731.9404  ----> 37 + 31.9404/60 = 37.53234 degrees
+10601.6986 ---> 106+1.6986/60 = 106.02831 degrees
