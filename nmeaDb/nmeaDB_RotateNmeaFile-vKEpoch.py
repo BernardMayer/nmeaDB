@@ -318,10 +318,33 @@ def xtrInfos(candidat, line, dP) :
             return candidat + " = " +  dP[candidat] + " dans " + line
         else :
             return None
-    # if (candidat == 'MWV') :
-        # pass
+    if (candidat == 'MWV') :
+        # $IIMWV,255,R,03.0,N,A*12
+        return candidat + " = pas necessaire"
+    if (candidat == 'HDG') :
+        # $IIHDG,328.,,,,*70
+        return candidat + " = pas necessaire"
+    if (candidat == 'VTG') :
+        # $IIVTG,046.,T,,M,03.5,N,06.5,K,A*2D
+        return candidat + " = pas necessaire"
+    if (candidat == 'DPT') :
+        # $IIDPT,0001.9,,*7A
+        return candidat + " = pas necessaire"
+    if (candidat == 'RMC') :
+        # $GPRMC,091930.00,A,4728.86549,N,00232.55440,W,5.248,201.64,010618,,,D*73
+        return candidat + " = pas necessaire"
+    if (candidat == 'GBS') :
+        # $GPGBS,091930.00,1.6,1.5,2.8,,,,*4A
+        return candidat + " = pas necessaire"
+    if (candidat == 'VTG') :
+        # $IIVTG,046.,T,,M,03.5,N,06.5,K,A*2D
+        return candidat + " = pas necessaire"
+    if (candidat == 'DPT') :
+        # $IIDPT,0001.9,,*7A
+        return candidat + " = pas necessaire"
     return None
 
+nbrGll = nbrRmc = nbrRmcUsed = nbrGllAndRmc = 0
 ts = ep = 0        
 with open(nmeaFilename, 'r') as fNmea :
     nLineRaw = nLine = 0
@@ -332,10 +355,15 @@ with open(nmeaFilename, 'r') as fNmea :
         if (line == "") :
             continue
         if (line[0:3] == "!AI") :
+            # !AIVDO,1,1,,,B3HvFrP0;?u7vh6jtRVhkwi5wP06,0*03
             continue
         nLine += 1
         if (line[0:1] == "$") :
             candidat = line[3:6]
+            if (candidat == 'GLL') :
+                nbrGll = nbrGll + 1
+            if (candidat == 'RMC') :
+                nbrRmc = nbrRmc + 1
             if (candidat == candidatVoulu) :
                 ep = 0
                 # print(getDtFromNmeaLine(line))
@@ -430,15 +458,16 @@ with open(nmeaFilename, 'r') as fNmea :
             # TODO
             # Commentaire ou phrase non attendue
 
-
-
 for (RMCep, v) in dRMCs.items() :
     # print("RMCep : ", RMCep, "\t", v, file=sys.stderr)
     if (RMCep not in dPivots) :
         dPivots[RMCep] = dPivot.copy() #dict()
+        nbrRmcUsed = nbrRmcUsed + 1
         # print("RMCep NOT in lKeys_dPivots ", RMCep, file=sys.stderr)
         # print(RMCep, dPivots[RMCep]['GLL'], dPivots[RMCep]['RMClatLon'], file=sys.stderr)
         # dPivots[RMCep]['RMCdt'] = dRMCs[RMCep]['RMCdt']
+    else :
+        nbrGllAndRmc = nbrGllAndRmc + 1
     dPivots[RMCep]['ts']  = dRMCs[RMCep]['ts']   
     dPivots[RMCep]['lat'] = dRMCs[RMCep]['RMClatNum']
     dPivots[RMCep]['lon'] = dRMCs[RMCep]['RMClonNum']
@@ -447,6 +476,7 @@ for (RMCep, v) in dRMCs.items() :
     dPivots[RMCep]['RMClonNum'] = dRMCs[RMCep]['RMClonNum']
     #print("RMCep=" + str(RMCep) + ", " + str(dPivots[RMCep]))
     
+print("nbrRmc =", nbrRmc, "nbrGll", nbrGll, "nbrRmcUsed", nbrRmcUsed, file=sys.stderr)
         
        
 # lKeys_dPivotsSorted = sorted(dPivots)
@@ -522,17 +552,11 @@ for (k, v) in dPivotsSorted.items() :
 latPre = lonPre = None
 keyList = sorted(dPivotsSorted.keys())
 for i,v in enumerate(keyList) :
-    #print("i", i)
-    # dPivotsSorted[keyList[i + 1]]
     k = keyList[i]
     # les -10 premiers kPre sont > aux k, car c'est l'autre bout de la liste :-)
     kPre = keyList[i - 10]
-
-    #print("i", i, "k", k, "kPre", kPre, " ", dPivotsSorted[k])
-    
     if (i >= 10 and not latPre is None and not lonPre is None and not dPivotsSorted[k]['lat'] is None and not dPivotsSorted[k]['lon'] is None) :
         if (latPre != dPivotsSorted[k]['lat'] and lonPre != dPivotsSorted[k]['lon']) :
-            # 
             dPivotsSorted[k]['d+10'] = round(distanceGPS(\
                 deg2rad(dPivotsSorted[k]['lat']), \
                 deg2rad(dPivotsSorted[k]['lon']), \
@@ -542,7 +566,6 @@ for i,v in enumerate(keyList) :
             )
             latPre = dPivotsSorted[kPre]['lat']
             lonPre = dPivotsSorted[kPre]['lon']
-            #print("distance : ", dPivotsSorted[k]['d-1']
         else :
             dPivotsSorted[k]['d+10'] = 0
     else :
@@ -550,9 +573,31 @@ for i,v in enumerate(keyList) :
             latPre = dPivotsSorted[kPre]['lat']
         if (lonPre is None) : 
             lonPre = dPivotsSorted[kPre]['lon']   
-    
-    print("i", i, "k", k, "kPre", kPre, " ", dPivotsSorted[k])
+    # print("i", i, "k", k, "kPre", kPre, " ", dPivotsSorted[k])
   
+for i,v in enumerate(keyList) :
+    k = keyList[i]
+    # les -60 premiers kPre sont > aux k, car c'est l'autre bout de la liste :-)
+    kPre = keyList[i - 60]
+    if (i >= 60 and not latPre is None and not lonPre is None and not dPivotsSorted[k]['lat'] is None and not dPivotsSorted[k]['lon'] is None) :
+        if (latPre != dPivotsSorted[k]['lat'] and lonPre != dPivotsSorted[k]['lon']) :
+            dPivotsSorted[k]['d+60'] = round(distanceGPS(\
+                deg2rad(dPivotsSorted[k]['lat']), \
+                deg2rad(dPivotsSorted[k]['lon']), \
+                deg2rad(latPre), \
+                deg2rad(lonPre) \
+                ), 0 \
+            )
+            latPre = dPivotsSorted[kPre]['lat']
+            lonPre = dPivotsSorted[kPre]['lon']
+        else :
+            dPivotsSorted[k]['d+60'] = 0
+    else :
+        if (latPre is None) :
+            latPre = dPivotsSorted[kPre]['lat']
+        if (lonPre is None) : 
+            lonPre = dPivotsSorted[kPre]['lon']   
+    print("i", i, "k", k, "kPre", kPre, " ", dPivotsSorted[k])
     
     
     
