@@ -11,9 +11,9 @@ from builtins import int
 # from past.builtins import long
 
 """
-Construire une structure de donnees,
-liste ordonnee (clef = timestamp) de 
-structure des informations dispo entre 2 timestamps
+Ajouter des informations calculees
+aux informations NMEA
+
 """
 
 # Pour calcul de distance...
@@ -65,12 +65,12 @@ me = sys.argv[0]
 #args = sys.argv[1:]
 if (len(sys.argv) != 3) :
     print(me + " : Pas le bon nombre de parametres.", file=sys.stderr)
-    print("Usage : " + me + " <Chemin et nom du fichier NMEA> <Chemin et nom du fichier NMEAts>", file=sys.stderr)
+    print("Usage : " + me + " <Chemin et nom du fichier NMEA pivote> <Chemin et nom du fichier NMEA pivote enrichi>", file=sys.stderr)
     quit()
 else :
     nmeaFilename = sys.argv[1]
-    nmeatsFilename = sys.argv[2]
-    print("I;Pivot du fichier NMEA [" + nmeaFilename + "] vers le ficher NMEA [" + nmeatsFilename + "]", file=sys.stderr)
+    nmeaRichFilename = sys.argv[2]
+    print("I;Enrichissement du fichier NMEA [" + nmeaFilename + "] vers le ficher NMEA [" + nmeaRichFilename + "]", file=sys.stderr)
 
 ## Tests prealables, fichier NMEA 
 if (not os.path.exists(nmeaFilename)) :
@@ -112,7 +112,7 @@ basename = os.path.basename(nmeaFilename)
 ##  Place disponible (2 x la taille du fichier)
 # nmeaFilenameSize = os.path.getsize(nmeaFilename)
 nmeaFilenameName, nmeaFilenameExtension = os.path.splitext(nmeaFilename)
-nmeatsFilename = nmeaFilenameName + "_TS" + nmeaFilenameExtension
+nmeaRichFilename = nmeaFilenameName + ".rich" + nmeaFilenameExtension
 # print("", )
 # shutil.copyfile(nmeaFilename, )
 
@@ -344,6 +344,30 @@ def xtrInfos(candidat, line, dP) :
         return candidat + " = pas necessaire"
     return None
 
+"""
+MAIN
+"""
+
+# Lire le fichier YAML en parametre
+"""
+f = open(nmeaFilename + ".yaml", 'w')
+yaml.dump(dPivotsSorted, f)    
+f.close()    
+"""
+f = open(nmeaFilename, 'r')
+dPivot = yaml.load(f)
+
+print(dPivot)
+
+f.close()
+quit()
+
+
+
+
+
+
+    
 nbrGll = nbrRmc = nbrRmcUsed = nbrGllAndRmc = 0
 ts = ep = 0        
 with open(nmeaFilename, 'r') as fNmea :
