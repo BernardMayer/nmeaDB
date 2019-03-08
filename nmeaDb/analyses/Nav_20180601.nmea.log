@@ -1,1 +1,2 @@
-C:\CAT_dskD\myTools\Python\Python36\python.exe: can't open file 'C:\RepoGit\nmeaDB\nmeaDb\nmeaDB_RotateNmeaFile.py.py': [Errno 2] No such file or directory
+I;Import du fichier NMEA [D:\RepoS\nmeaDB\nmeaDb\datas\Nav_20180601.nmea] dans la base Sqlite [D:\RepoS\nmeaDB\nmeaDb\nmeaDb.sqlite]
+2018-06-01 14:11:21
