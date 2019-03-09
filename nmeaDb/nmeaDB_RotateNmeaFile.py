@@ -146,6 +146,11 @@ $IIZDA,hhmmss.ss,xx,xx,xxxx,,*hh
        I_Heure
 $IIZDA	194020,20,09,2017,,*5E
 $IIZDA	152520,07,07,2017,,*5A
+
+!AIVDM, !AIVDO, $AIALR, $AITXT
+$GPAPB, $GPBOD, $GPGBS, $GPGGA, $GPGLL, $GPGSA, $GPGSV, $GPRMB, $GPRMC, $GPRTE, $GPTXT, $GPVTG, $GPWPL
+$IIDBT, $IIDPT, $IIGLL, $IIHDG, $IIHDM, $IIMTA, $IIMTW, $IIMWD, $IIMWV, $IIVHW, $IIVLW, $IIVTG, $IIVWR, $IIVWT, $IIZDA
+$PMGNS, $PSRT
 """
 dJson = dict()
 dJson['name'] = basename
@@ -157,6 +162,12 @@ dRMCs = dict()
 candidatVoulu = 'ZDA'
 dPivots = dict()
 dPivotsSorted = collections.OrderedDict()
+"""
+!AIVDM, !AIVDO, $AIALR, $AITXT
+$GPAPB, $GPBOD, $GPGBS, $GPGGA, $GPGLL, $GPGSA, $GPGSV, $GPRMB, $GPRMC, $GPRTE, $GPTXT, $GPVTG, $GPWPL
+$IIDBT, $IIDPT, $IIGLL, $IIHDG, $IIHDM, $IIMTA, $IIMTW, $IIMWD, $IIMWV, $IIVHW, $IIVLW, $IIVTG, $IIVWR, $IIVWT, $IIZDA
+$PMGNS, $PSRT
+"""
 dPivot = dict()
 dPivot['ts'] = None #0.0
 dPivot['lat'] = None #0.0
@@ -165,29 +176,58 @@ dPivot['d-1'] = None #0
 dPivot['d+10'] = None #0
 dPivot['d+60'] = None #0
 # dPivot['ZDAepoch'] = None #0
+dPivot['APB'] = None
+dPivot['BOD'] = None
+dPivot['DBT'] = None #0.0
+dPivot['DPT'] = None
+# dPivot['HDG'] = None #0.0
+dPivot['HDM'] = None #0.0
+dPivot['GBS'] = None
+dPivot['GGA'] = None
 dPivot['GLL'] = None #""
 dPivot['GLLlatNum'] = None #0.0
 dPivot['GLLlonNum'] = None #0.0
+dPivot['GSA'] = None
+dPivot['GSV'] = None
+# dPivot['HDG'] = None #0.0
+dPivot['HDM'] = None #0.0
+dPivot['MTA'] = None #0.0
+dPivot['MTW'] = None #0.0
+dPivot['MWD'] = None
+dPivot['MWDtws'] = None #0.0
+dPivot['MWDtwd'] = None #0.0
+dPivot['MWV'] = None
+dPivot['RMB'] = None
+# dPivot['RMC'] = None
 dPivot['RMCts'] = None #0
 # dPivot['RMCep'] = None #0
 dPivot['RMClatlon'] = None #""
 dPivot['RMClatNum'] = None #0.0
 dPivot['RMClonNum'] = None #0.0
-dPivot['VHW'] = None #0.0
+dPivot['RTE'] = None
+dPivot['TXT'] = None
+dPivot['VHW'] = None
 dPivot['VLW'] = None #0.0
 dPivot['VLWtotal'] = None #0.0
-dPivot['DBT'] = None #0.0
-dPivot['MTW'] = None #0.0
+dPivot['VTG'] = None
+dPivot['VWR'] = None
 dPivot['VWRrl'] = None #""
 dPivot['VWRawa'] = None #0.0
 dPivot['VWRaws'] = None #0.0
-dPivot['MWDtws'] = None #0.0
-dPivot['MWDtwd'] = None #0.0
+dPivot['VWT'] = None
 dPivot['VWTrl'] = None #""
 dPivot['VWTtwa'] = None #0.0
 dPivot['VWTtws'] = None #0.0
-dPivot['MTA'] = None #0.0
-dPivot['HDM'] = None #0.0
+dPivot['WPL'] = None
+dPivot['ZDA'] = None
+# dPivot[''] = None
+# dPivot[''] = None
+# dPivot[''] = None
+# dPivot[''] = None
+# dPivot[''] = None
+# dPivot[''] = None
+# dPivot[''] = None
+# dPivot[''] = None
 
 #############################################################################
 def dms2dd(d, m, s):
@@ -264,6 +304,73 @@ def getDtFromNmeaLine(line) :
 
 def xtrInfos(candidat, line, dP) :
     lTmp = line.split(',')
+    """
+!AIVDM, !AIVDO, $AIALR, $AITXT
+$GPAPB, $GPBOD, $GPGBS, $GPGGA, $GPGLL, $GPGSA, $GPGSV, $GPRMB, $GPRMC, $GPRTE, $GPTXT, $GPVTG, $GPWPL
+$IIDBT, $IIDPT, $IIGLL, $IIHDG, $IIHDM, $IIMTA, $IIMTW, $IIMWD, $IIMWV, $IIVHW, $IIVLW, $IIVTG, $IIVWR, $IIVWT, $IIZDA
+$PMGNS, $PSRT
+    """
+    # if () :
+        # dp[candidat] =
+        # return candidat + " = " +
+     """   
+    # $GPAPB,,,,,,,,,,,,,,*44    APB - Autopilot Sentence "B"
+    Field Number:
+        Status V = Loran-C Blink or SNR warning V = general warning flag or other navigation systems when a reliable fix is not available
+        Status V = Loran-C Cycle Lock warning flag A = OK or not used
+        Cross Track Error Magnitude
+        Direction to steer, L or R
+        Cross Track Units, N = Nautical Miles
+        Status A = Arrival Circle Entered
+        Status A = Perpendicular passed at waypoint
+        Bearing origin to destination -->     
+        M = Magnetic, T = True
+        Destination Waypoint ID
+        Bearing, present position to Destination -->    
+        M = Magnetic, T = True 
+        Heading to steer to destination waypoint -->    
+        M = Magnetic, T = True
+        Checksum
+    Example: $GPAPB,A,A,0.10,R,N,V,V,011,M,DEST,011,M,011,M*82
+    """
+    
+    # $GPBOD,,T,,M,ATT VILAIN,ATT-PALAIS*59     BOD - Bearing - Waypoint to Waypoint   ! is NOT updated dynamically! 
+    
+    # $GPGBS,072627.00,4.3,2.8,8.6,,,,*44    GBS - GPS Satellite Fault Detection
+    
+    # $GPGGA,072844.000,4714.3220,N,00131.5485,W,1,08,1.6,36.2,M,48.5,M,,0000*78    GGA - Global Positioning System Fix Data
+    
+    # $GPGSA,A,3,05,07,08,13,15,18,20,21,24,28,30,37,1.5,1.0,1.1*38    GSA - GPS DOP and active satellites
+    
+    # $GPGSV,3,2,12,22,59,065,38,01,53,117,46,17,51,276,,23,45,180,39*7F    GSV - Satellites in view
+    
+    """
+    # $GPRMB,V,,,ATT-PAL,ATT VI,4730.3500,N,00231.7540,W,,,,V,N*62    RMB - Recommended Minimum Navigation Information
+        Status, A= Active, V = Void
+        Cross Track error - nautical miles
+        Direction to Steer, Left or Right
+        TO Waypoint ID
+        FROM Waypoint ID
+        Destination Waypoint Latitude
+        N or S
+        Destination Waypoint Longitude
+        E or W
+        Range to destination in nautical miles
+        Bearing to destination in degrees True
+        Destination closing velocity in knots
+        Arrival Status, A = Arrival Circle Entered
+        FAA mode indicator (NMEA 2.3 and later)
+        Checksum
+    Example: $GPRMB,A,0.66,L,003,004,4917.24,N,12309.57,W,001.3,052.5,000.5,V*0B
+    """
+    
+    # $GPRTE,1,1,c,VIL LE PALAIS,ATT-PALAIS,ATT VILAIN*75    RTE - Routes
+    
+    # $GPWPL,4721.3270,N,00308.6350,W,ATT-PALAIS*3E
+    
+    # 
+    
+    
     if (candidat == 'VHW') :
         dP[candidat] = float(lTmp[5])
         return candidat + " = " + lTmp[5] + " dans " + line
@@ -602,11 +709,11 @@ for i,v in enumerate(keyList) :
     
     
     
-# print(yaml.dump(dPivotsSorted))
+# f = open(nmeaFilename + ".yaml", 'w')
+# yaml.dump(dPivotsSorted, f)    
+# f.close()
 
-f = open(nmeaFilename + ".yaml", 'w')
-yaml.dump(dPivotsSorted, f)    
-f.close()
+##  JSON
 f = open(nmeaFilename + ".json", 'w')
 dJson['datas'] = dPivotsSorted
 # json.dump(dPivotsSorted, f, indent=2, separators=(", ", ": "))

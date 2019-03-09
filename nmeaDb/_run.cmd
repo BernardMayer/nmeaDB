@@ -25,7 +25,7 @@
 @rem nmeaDB_RotateNmeaFile.py
 @rem 
 %pyBin% ^
-	%appHome%\nmeaDB_RotateNmeaFile-vKEpoch.py ^
+	%appHome%\nmeaDB_RotateNmeaFile.py ^
 	%appHome%\datas\%nmeaFile% ^
 	%appHome%\nmeaDb.sqlite ^
 	1> %appHome%\analyses\%nmeaFile%.infos ^
