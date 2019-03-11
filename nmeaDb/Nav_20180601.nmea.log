@@ -1,4 +1,4 @@
-I;Pivot du fichier NMEA [C:\RepoGit\nmeaDB\nmeaDb\datas\Nav_20180601.nmea] vers le ficher NMEA [C:\RepoGit\nmeaDB\nmeaDb\nmeaDb.sqlite]
+I;Pivot du fichier NMEA [D:\RepoS\nmeaDB\nmeaDb\datas\Nav_20180601.nmea] vers le ficher NMEA [D:\RepoS\nmeaDB\nmeaDb\nmeaDb.sqlite]
 Traitement non prevu pour candidat : $PSRT,001,,,Software Bootloader Ver 4.0 *57
 Traitement non prevu pour candidat : $PSRT,001,,,--- Jul  4 2008 13:17:18 ---*54
 Traitement non prevu pour candidat : $PSRT,VER,,,,,,00001403*6E

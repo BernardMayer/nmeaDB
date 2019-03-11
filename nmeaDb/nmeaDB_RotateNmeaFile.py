@@ -204,6 +204,8 @@ dPivot['RMCts'] = None #0
 dPivot['RMClatlon'] = None #""
 dPivot['RMClatNum'] = None #0.0
 dPivot['RMClonNum'] = None #0.0
+dPivot['RMCsog'] = None #0.0
+dPivot['RMCtmg'] = None #0.0
 dPivot['RTE'] = None
 dPivot['TXT'] = None
 dPivot['VHW'] = None
@@ -305,15 +307,15 @@ def getDtFromNmeaLine(line) :
 def xtrInfos(candidat, line, dP) :
     lTmp = line.split(',')
     """
-!AIVDM, !AIVDO, $AIALR, $AITXT
-$GPAPB, $GPBOD, $GPGBS, $GPGGA, $GPGLL, $GPGSA, $GPGSV, $GPRMB, $GPRMC, $GPRTE, $GPTXT, $GPVTG, $GPWPL
-$IIDBT, $IIDPT, $IIGLL, $IIHDG, $IIHDM, $IIMTA, $IIMTW, $IIMWD, $IIMWV, $IIVHW, $IIVLW, $IIVTG, $IIVWR, $IIVWT, $IIZDA
-$PMGNS, $PSRT
+    !AIVDM, !AIVDO, $AIALR, $AITXT
+    $GPAPB, $GPBOD, $GPGBS, $GPGGA, $GPGLL, $GPGSA, $GPGSV, $GPRMB, $GPRMC, $GPRTE, $GPTXT, $GPVTG, $GPWPL
+    $IIDBT, $IIDPT, $IIGLL, $IIHDG, $IIHDM, $IIMTA, $IIMTW, $IIMWD, $IIMWV, $IIVHW, $IIVLW, $IIVTG, $IIVWR, $IIVWT, $IIZDA
+    $PMGNS, $PSRT
     """
     # if () :
         # dp[candidat] =
         # return candidat + " = " +
-     """   
+    """   
     # $GPAPB,,,,,,,,,,,,,,*44    APB - Autopilot Sentence "B"
     Field Number:
         Status V = Loran-C Blink or SNR warning V = general warning flag or other navigation systems when a reliable fix is not available
@@ -439,6 +441,16 @@ $PMGNS, $PSRT
         return candidat + " = pas necessaire"
     if (candidat == 'RMC') :
         # $GPRMC,091930.00,A,4728.86549,N,00232.55440,W,5.248,201.64,010618,,,D*73
+                                
+        ##  Info de nav, vont dans le dict() general
+        if (lTmp[7] != "") :
+            dP['RMCsog'] = lTmp[7]
+
+        if (lTmp[8] != "") :
+            dP['RMCtmg'] = lTmp[8]#round(float(lTmp[8]), 0)
+        
+        
+        
         return candidat + " = pas necessaire"
     if (candidat == 'GBS') :
         # $GPGBS,091930.00,1.6,1.5,2.8,,,,*4A
@@ -560,6 +572,8 @@ with open(nmeaFilename, 'r') as fNmea :
                             dRMCs[RMCep]['RMClonNum'] = DMd2Dd(("-" + lTmp[5])) #float("-" + lTmp[5]) / 100.0
                         else :
                             dRMCs[RMCep]['RMClonNum'] = DMd2Dd(lTmp[5]) #float(lTmp[5]) / 100.0
+
+
         else :
             pass 
             # TODO
@@ -707,6 +721,17 @@ for i,v in enumerate(keyList) :
     print("i", i, "k", k, "kPre", kPre, " ", dPivotsSorted[k])
     
     
+for i,v in enumerate(keyList) :
+    k = keyList[i]
+    s = str(k) + TAB + str(dPivotsSorted[k]['RMCtmg']) + TAB
+    if (dPivotsSorted[k]['RMCtmg'] is None) :
+        s = s + "---"
+    else :
+        v = round(float(dPivotsSorted[k]['RMCtmg']), 0)
+        s = s + str(v)
+    s = s + TAB + str(dPivotsSorted[k]['HDM']) + TAB + str(dPivotsSorted[k]['RMCsog']) + TAB + str(dPivotsSorted[k]['VHW'])
+    
+    print(s)
     
     
 # f = open(nmeaFilename + ".yaml", 'w')
@@ -720,6 +745,9 @@ dJson['datas'] = dPivotsSorted
 json.dump(dJson, f, indent=2, separators=(", ", ": "))  
 f.close()
 quit()
+
+
+
 
 
             
@@ -761,6 +789,31 @@ if (ddCandidats['ZDA']['nbrL'] > 0) :
     
 
 exit()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ##  Verif prealable de la DB
 
@@ -1056,3 +1109,4 @@ except Exception as e :
         # print(k, TAB, v)
 # else :
     # print("Pas de talker dans ce fichier NMEA")
+    

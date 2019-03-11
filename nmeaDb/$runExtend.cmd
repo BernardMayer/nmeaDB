@@ -11,6 +11,7 @@
 @set nmeaFile=Calibration01.nmea
 @set nmeaFile=Garmin152h.nmea
 @set nmeaFile=Nav_20180601.nmea
+@set nmeaFile=Nav_20180601.nmea.yaml
 @rem @set nmeaFile=NkeLauBen.nmea
 @rem @set nmeaFile=opcn-20170911-082000.nmea
 @rem @set nmeaFile=opcn-20170911-164500.nmea
@@ -27,9 +28,9 @@
 @rem nmeaDB_RotateNmeaFile.py
 @rem 
 %pyBin% ^
-	%appHome%\nmeaDB_RotateNmeaFile.py ^
+	%appHome%\nmeaDB_ExtendDatas-20190308.py ^
 	%appHome%\datas\%nmeaFile% ^
 	%appHome%\nmeaDb.sqlite ^
-	1> %appHome%\doc_dev\%nmeaFile%.infos ^
+	1> %appHome%\analyses\%nmeaFile%.infos ^
 	2> %appHome%\%nmeaFile%.log
 	
