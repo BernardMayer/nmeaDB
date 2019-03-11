@@ -1,0 +1,133 @@
+-- 
+
+select DISTINCT NmeaID
+from nmeaValues
+order by 1
+;
+
+-- 24 IDs
+$GPBOD
+$GPGGA
+$GPGLL
+$GPGSA
+$GPGSV
+$GPRMB
+$GPRMC
+$GPRTE
+$GPVTG
+$IIDBT
+$IIDPT
+$IIGLL
+$IIHDG
+$IIHDM
+$IIMTA
+$IIMTW
+$IIMWD
+$IIMWV
+$IIVHW
+$IIVLW
+$IIVTG
+$IIVWR
+$IIVWT
+$IIZDA
+
+select DISTINCT substr(NmeaID, 4)
+from nmeaValues
+order by 1
+;
+
+-- 22 IDs
+BOD
+DBT
+DPT
+GGA
+GLL
+GSA
+GSV
+HDG
+HDM
+MTA
+MTW
+MWD
+MWV
+RMB
+RMC
+RTE
+VHW
+VLW
+VTG
+VWR
+VWT
+ZDA
+
+-- GLL, VTG sont communs
+
+select NmeaID, NmeaVal
+from nmeaValues
+where NmeaID = ('$GPGLL')
+limit 5
+;
+$GPGLL	4729.9205,N,00222.6770,W,193428,A,D*57
+$GPGLL	4729.9205,N,00222.6770,W,193430,A,D*5E
+$GPGLL	4729.9205,N,00222.6770,W,193432,A,D*5C
+$GPGLL	4729.9205,N,00222.6770,W,193434,A,D*5A
+$GPGLL	4729.9205,N,00222.6770,W,193436,A,D*58
+
+select NmeaID, NmeaVal
+from nmeaValues
+where NmeaID = ('$IIGLL')
+limit 5
+;
+$IIGLL	4727.915,N,00237.362,W,105238,A,A*45
+$IIGLL	4727.915,N,00237.365,W,105240,A,A*4D
+$IIGLL	4727.915,N,00237.368,W,105242,A,A*42
+$IIGLL	4727.915,N,00237.370,W,105244,A,A*4D
+$IIGLL	4727.915,N,00237.370,W,105246,A,A*4F
+
+/* 
+GLL - Geographic Latitude and Longitude is a holdover from Loran data and some old units may not send the time and data active information if they are emulating Loran data. If a gps is emulating Loran data they may use the LC Loran prefix instead of GP.
+  $GPGLL,4916.45,N,12311.12,W,225444,A,*1D
+Where:
+     GLL          Geographic position, Latitude and Longitude
+     4916.46,N    Latitude 49 deg. 16.45 min. North
+     12311.12,W   Longitude 123 deg. 11.12 min. West
+     225444       Fix taken at 22:54:44 UTC
+     A            Data Active or V (void)
+     *iD          checksum data
+Note that, as of the 2.3 release of NMEA, there is a new field in the GLL sentence at the end just prior to the checksum. For more information on this field see here. 
+A=autonomous, D=differential, E=Estimated, N=not valid, S=Simulator
+*/
+
+
+select NmeaID, NmeaVal
+from nmeaValues
+where NmeaID = ('$GPVTG')
+limit 5
+;
+$GPVTG	143.5,T,146.4,M,0.0,N,0.0,K*4A
+
+select distinct NmeaID, NmeaVal
+from nmeaValues
+where NmeaID = ('$IIVTG')
+limit 5
+;
+$IIVTG	270.,T,,M,03.3,N,06.1,K,A*28
+$IIVTG	266.,T,,M,03.2,N,05.9,K,A*25
+$IIVTG	264.,T,,M,03.2,N,05.9,K,A*27
+$IIVTG	268.,T,,M,03.2,N,05.9,K,A*2B
+$IIVTG	268.,T,,M,03.3,N,06.1,K,A*21
+
+/*
+VTG - Velocity made good. The gps receiver may use the LC prefix instead of GP if it is emulating Loran output.
+  $GPVTG,054.7,T,034.4,M,005.5,N,010.2,K*48
+where:
+        VTG          Track made good and ground speed
+        054.7,T      True track made good (degrees)
+        034.4,M      Magnetic track made good
+        005.5,N      Ground speed, knots
+        010.2,K      Ground speed, Kilometers per hour
+        *48          Checksum
+Note that, as of the 2.3 release of NMEA, there is a new field in the VTG sentence at the end just prior to the checksum. For more information on this field see here.
+Receivers that don't have a magnetic deviation (variation) table built in will null out the Magnetic track made good. 
+A=autonomous, D=differential, E=Estimated, N=not valid, S=Simulator
+*/

@@ -1,7 +1,7 @@
-@rem @set pyBin=C:\CAT_dskD\myTools\Python\Python36\python.exe
-@set pyBin=D:\myTools\Python\Python36\python.exe
-@rem @set appHome=C:\RepoGit\nmeaDB\nmeaDb
-@set appHome=D:\RepoS\nmeaDB\nmeaDb
+@set pyBin=C:\CAT_dskD\myTools\Python\Python36\python.exe
+@rem @set pyBin=D:\myTools\Python\Python36\python.exe
+@set appHome=C:\RepoGit\nmeaDB\nmeaDb
+@rem @set appHome=D:\RepoS\nmeaDB\nmeaDb
 
 @rem  VHF_20151215.nmea contient des $GPRMC non conformes !
 @rem @set nmeaFile=VHF_20151215.nmea
@@ -29,7 +29,7 @@
 %pyBin% ^
 	%appHome%\nmeaDB_RotateNmeaFile.py ^
 	%appHome%\datas\%nmeaFile% ^
-	%appHome%\nmeaDb.sqlite ^
+	IIZDA ^
 	1> %appHome%\doc_dev\%nmeaFile%.infos ^
 	2> %appHome%\%nmeaFile%.log
 	
