@@ -166,7 +166,9 @@ dJson['nmeaFilename'] = nmeaFilename
 
 dRMCs = dict()
 candidatVoulu = 'ZDA'
+
 dPivots = dict()
+
 dPivotsSorted = collections.OrderedDict()
 """
 !AIVDM, !AIVDO, $AIALR, $AITXT
@@ -174,68 +176,72 @@ $GPAPB, $GPBOD, $GPGBS, $GPGGA, $GPGLL, $GPGSA, $GPGSV, $GPRMB, $GPRMC, $GPRTE, 
 $IIDBT, $IIDPT, $IIGLL, $IIHDG, $IIHDM, $IIMTA, $IIMTW, $IIMWD, $IIMWV, $IIVHW, $IIVLW, $IIVTG, $IIVWR, $IIVWT, $IIZDA
 $PMGNS, $PSRT
 """
-dPivot = dict()
-dPivot['ts'] = None #0.0
-dPivot['lat'] = None #0.0
-dPivot['lon'] = None #0.0
-dPivot['d-1'] = None #0
-dPivot['d+10'] = None #0
-dPivot['d+60'] = None #0
-# dPivot['ZDAepoch'] = None #0
-dPivot['APB'] = None
-dPivot['BOD'] = None
-dPivot['DBT'] = None #0.0
-dPivot['DPT'] = None
-# dPivot['HDG'] = None #0.0
-dPivot['HDM'] = None #0.0
-dPivot['GBS'] = None
-dPivot['GGA'] = None
-dPivot['GLL'] = None #""
-dPivot['GLLlatNum'] = None #0.0
-dPivot['GLLlonNum'] = None #0.0
-dPivot['GSA'] = None
-dPivot['GSV'] = None
-# dPivot['HDG'] = None #0.0
-dPivot['HDM'] = None #0.0
-dPivot['MTA'] = None #0.0
-dPivot['MTW'] = None #0.0
-dPivot['MWD'] = None
-dPivot['MWDtws'] = None #0.0
-dPivot['MWDtwd'] = None #0.0
-dPivot['MWV'] = None
-dPivot['RMB'] = None
-# dPivot['RMC'] = None
-dPivot['RMCts'] = None #0
-# dPivot['RMCep'] = None #0
-dPivot['RMClatlon'] = None #""
-dPivot['RMClatNum'] = None #0.0
-dPivot['RMClonNum'] = None #0.0
-dPivot['RMCsog'] = None #0.0
-dPivot['RMCtmg'] = None #0.0
-dPivot['RTE'] = None
-dPivot['TXT'] = None
-dPivot['VHW'] = None
-dPivot['VLW'] = None #0.0
-dPivot['VLWtotal'] = None #0.0
-dPivot['VTG'] = None
-dPivot['VWR'] = None
-dPivot['VWRrl'] = None #""
-dPivot['VWRawa'] = None #0.0
-dPivot['VWRaws'] = None #0.0
-dPivot['VWT'] = None
-dPivot['VWTrl'] = None #""
-dPivot['VWTtwa'] = None #0.0
-dPivot['VWTtws'] = None #0.0
-dPivot['WPL'] = None
-dPivot['ZDA'] = None
-# dPivot[''] = None
-# dPivot[''] = None
-# dPivot[''] = None
-# dPivot[''] = None
-# dPivot[''] = None
-# dPivot[''] = None
-# dPivot[''] = None
-# dPivot[''] = None
+
+def getDictEpoch() :
+    dPivot = dict()
+    dPivot['ts'] = None #0.0
+    # dPivot['lat'] = None #0.0
+    # dPivot['lon'] = None #0.0
+    # dPivot['d-1'] = None #0
+    # dPivot['d+10'] = None #0
+    # dPivot['d+60'] = None #0
+    # dPivot['ZDAepoch'] = None #0
+    dPivot['ECAPB'] = None
+    dPivot['GPAPB'] = None
+    dPivot['BOD'] = None
+    dPivot['DBT'] = None #0.0
+    # dPivot['DPT'] = None
+    # dPivot['HDG'] = None #0.0
+    dPivot['HDM'] = None #0.0
+    # dPivot['GBS'] = None
+    # dPivot['GGA'] = None
+    # dPivot['GLL'] = None #""
+    dPivot['GLLlatNum'] = None #0.0
+    dPivot['GLLlonNum'] = None #0.0
+    # dPivot['GSA'] = None
+    # dPivot['GSV'] = None
+    # dPivot['HDG'] = None #0.0
+    dPivot['HDM'] = None #0.0
+    dPivot['MTA'] = None #0.0
+    dPivot['MTW'] = None #0.0
+    dPivot['MWD'] = None
+    dPivot['MWDtws'] = None #0.0
+    dPivot['MWDtwd'] = None #0.0
+    dPivot['MWV'] = None
+    dPivot['ECRMB'] = None
+    dPivot['GPRMB'] = None
+    # dPivot['RMC'] = None
+    dPivot['GPRMCts'] = None #0
+    dPivot['GPRMClatlon'] = None #""
+    dPivot['GPRMClatNum'] = None #0.0
+    dPivot['GPRMClonNum'] = None #0.0
+    dPivot['GPRMCsog'] = None #0.0
+    dPivot['GPRMCtmg'] = None #0.0
+    # dPivot['RTE'] = None
+    # dPivot['TXT'] = None
+    dPivot['VHW'] = None
+    dPivot['VLW'] = None #0.0
+    dPivot['VLWtotal'] = None #0.0
+    dPivot['VTG'] = None
+    dPivot['VWR'] = None
+    dPivot['VWRrl'] = None #""
+    dPivot['VWRawa'] = None #0.0
+    dPivot['VWRaws'] = None #0.0
+    dPivot['VWT'] = None
+    dPivot['VWTrl'] = None #""
+    dPivot['VWTtwa'] = None #0.0
+    dPivot['VWTtws'] = None #0.0
+    # dPivot['WPL'] = None
+    dPivot['ZDA'] = None
+    # dPivot[''] = None
+    # dPivot[''] = None
+    # dPivot[''] = None
+    # dPivot[''] = None
+    # dPivot[''] = None
+    # dPivot[''] = None
+    # dPivot[''] = None
+    # dPivot[''] = None
+    return dPivot
 
 def dms2dd(d, m, s):
     """Convertit un angle "degrés minutes secondes" en "degrés décimaux"
@@ -370,22 +376,33 @@ def xtrInfos(candidat, line, dP) :
     # $GPWPL,4721.3270,N,00308.6350,W,ATT-PALAIS*3E
     
     # 
-    
-    
-    if (candidat == 'VHW') :
-        dP[candidat] = float(lTmp[5])
+    if (candidat == 'ECAPB' and lTmp[1] == 'A' and lTmp[2] == 'A') :
+        dp['ECAPB'] = line
+        return candidat + " = " + line 
+    if (candidat == 'GPAPB' and lTmp[1] == 'A' and lTmp[2] == 'A') :
+        dp['GPAPB'] = line
+        return candidat + " = " + line
+    if (candidat == 'ECRMB' and lTmp[1] == 'A') :
+        dp['ECRMB'] = line
+        return candidat + " = " + line
+    if (candidat == 'GPRMB' and lTmp[1] == 'A') :
+        dp['GPRMB'] = line
+        return candidat + " = " + line
+
+    if (candidat == 'IIVHW') :
+        dP['VHW'] = float(lTmp[5])
         return candidat + " = " + lTmp[5] + " dans " + line
-    if (candidat == 'VLW') :
-        dP[candidat] = float(lTmp[3])
+    if (candidat == 'IIVLW') :
+        dP['VLW'] = float(lTmp[3])
         dP['VLWtotal'] = float(lTmp[1])
         return candidat + " = " + lTmp[3] + " VLWtotal = " + lTmp[1] + " dans " + line
-    if (candidat == 'DBT') :
-        dP[candidat] = float(lTmp[3])
+    if (candidat == 'IIDBT') :
+        dP['DBT'] = float(lTmp[3])
         return candidat + " = " + lTmp[3] + " dans " + line
-    if (candidat == 'MTW') :
-        dP[candidat] = float(lTmp[1])
+    if (candidat == 'IIMTW') :
+        dP['MTW'] = float(lTmp[1])
         return candidat + " = " + lTmp[1] + " dans " + line
-    if (candidat == 'VWR') :
+    if (candidat == 'IIVWR') :
         dP['VWRrl'] = lTmp[2]
         if (lTmp[2] == 'L') :
             dP['VWRawa'] = -float(lTmp[1])
@@ -393,11 +410,11 @@ def xtrInfos(candidat, line, dP) :
             dP['VWRawa'] = float(lTmp[1])
         dP['VWRaws'] = float(lTmp[3])
         return candidat + " VWRawa = " + str(dP['VWRawa']) + " VWRrl = " + lTmp[2] + " VWRaws = " + lTmp[3] + " dans " + line
-    if (candidat == 'MWD') :
+    if (candidat == 'IIMWD') :
         dP['MWDtwd'] = float(lTmp[3])
         dP['MWDtws'] = float(lTmp[5])
         return candidat + " MWDtwd = " + lTmp[3] + " MWDtws = " + lTmp[5] + " dans " + line
-    if (candidat == 'VWT') :
+    if (candidat == 'IIVWT') :
         dP['VWTrl'] = lTmp[2]
         if (lTmp[2] == 'L') :
             dP['VWTtwa'] = -float(lTmp[1])
@@ -405,13 +422,13 @@ def xtrInfos(candidat, line, dP) :
             dP['VWTtwa'] = float(lTmp[1])
         dP['VWTtws'] = float(lTmp[3])
         return candidat + " VWTtwa = " + str(dP['VWTtwa']) + " VWTrl = " + lTmp[2] + " VWTtws = " + lTmp[3] + " dans " + line
-    if (candidat == 'MTA') :
-        dP[candidat] = float(lTmp[1])
+    if (candidat == 'IIMTA') :
+        dP['MTA'] = float(lTmp[1])
         return candidat + " = " + lTmp[1] + " dans " + line
-    if (candidat == 'HDM') :
-        dP[candidat] = float(lTmp[1])
+    if (candidat == 'IIHDM') :
+        dP['HDM'] = float(lTmp[1])
         return candidat + " = " + lTmp[1] + " dans " + line
-    if (candidat == 'GLL') :
+    if (candidat == 'IIGLL') :
         # $GPGLL,4740.2898,N,00321.2259,W,083718,A,A*50
         if (lTmp[6] == 'A') :
             dP[candidat] = str(float(lTmp[1])) + "," + lTmp[2] + "," + str(float(lTmp[3])) + "," + lTmp[4]
@@ -426,39 +443,38 @@ def xtrInfos(candidat, line, dP) :
             return candidat + " = " +  dP[candidat] + " dans " + line
         else :
             return None
-    if (candidat == 'MWV') :
+    if (candidat == 'IIMWV') :
         # $IIMWV,255,R,03.0,N,A*12
         return candidat + " = pas necessaire"
-    if (candidat == 'HDG') :
+    if (candidat == 'IIHDG') :
         # $IIHDG,328.,,,,*70
         return candidat + " = pas necessaire car HDM present"
-    if (candidat == 'VTG') :
+    if (candidat == 'IIVTG') :
         # $IIVTG,046.,T,,M,03.5,N,06.5,K,A*2D
         return candidat + " = pas necessaire"
-    if (candidat == 'DPT') :
+    if (candidat == 'IIDPT') :
         # $IIDPT,0001.9,,*7A
         return candidat + " = pas necessaire"
-    if (candidat == 'RMC') :
+    if (candidat == 'GPRMC' or candidat == 'ECRMC' or candidat == 'IIRMC') :
         # $GPRMC,091930.00,A,4728.86549,N,00232.55440,W,5.248,201.64,010618,,,D*73
-                                
         ##  Info de nav, vont dans le dict() general
         if (lTmp[7] != "") :
-            dP['RMCsog'] = lTmp[7]
-
+            dP['GPRMCsog'] = lTmp[7]
         if (lTmp[8] != "") :
-            dP['RMCtmg'] = lTmp[8]#round(float(lTmp[8]), 0)
-        
-        
-        
-        return candidat + " = pas necessaire"
-    if (candidat == 'GBS') :
+            dP['GPRMCtmg'] = lTmp[8]#round(float(lTmp[8]), 0)
+        # dPivot['GPRMCts'] = None #0
+        # dPivot['GPRMClatlon'] = None #""
+        # dPivot['GPRMClatNum'] = None #0.0
+        # dPivot['GPRMClonNum'] = None #0.0
+
+            
+            
+        return candidat + " = SOG et TMG"
+    if (candidat == 'GPGBS') :
         # $GPGBS,091930.00,1.6,1.5,2.8,,,,*4A
         return candidat + " = pas necessaire"
-    if (candidat == 'VTG') :
+    if (candidat == 'IIVTG') :
         # $IIVTG,046.,T,,M,03.5,N,06.5,K,A*2D
-        return candidat + " = pas necessaire"
-    if (candidat == 'DPT') :
-        # $IIDPT,0001.9,,*7A
         return candidat + " = pas necessaire"
     return None
 
@@ -482,10 +498,10 @@ def getEpochFromIIZDA(line) :
     ts = float(lTmp[4] + lTmp[3] + lTmp[2] + lTmp[1][0:2] + lTmp[1][2:4] + lTmp[1][4:6] + ".0")
     dt = datetime.datetime(int(lTmp[4]), int(lTmp[3]), int(lTmp[2]), int(lTmp[1][0:2]), int(lTmp[1][2:4]), int(lTmp[1][4:6]))
     ep = (dt - dt1970).total_seconds() + 0.0
-    print("ZDA [", line, "] ts", ts, file=sys.stderr)
+    print("ZDA [", line, "] ts", ts, "    ep", ep, file=sys.stderr)
     return (ts, ep)
     
-    
+# dPivot = getDictEpoch()
 nbrGll = nbrRmc = nbrRmcUsed = nbrGllAndRmc = 0
 ts = ep = 0        
 with open(nmeaFilename, 'r') as fNmea :
@@ -507,7 +523,6 @@ with open(nmeaFilename, 'r') as fNmea :
             if (candidat == srcEpoch) :
                 ##  ? Reference de temps ?
                 # print("candidat == srcEpoch")
-                ep = 0.0
                 if   (candidat == "GPRMC") :
                     (ep, ts) = getEpochFromGPRMC(line)
                 elif (candidat == "ECRMC") :
@@ -517,10 +532,8 @@ with open(nmeaFilename, 'r') as fNmea :
                 else :
                     print("E;Reference de temps a partir de NMEA [" + srcEpoch + "] non geree", file=sys.stderr)
                     quit()
-            
                 # print("ep", ep, TAB, "ts", ts)
-            
-                if (not ep in dPivotsSorted) :
+                if (not ep in dPivotsSorted and ep > 0) :
                     pass
                 elif (not round(ep + 0.1, 1) in dPivotsSorted) :
                     ep = round(ep + 0.1, 1)
@@ -540,10 +553,26 @@ with open(nmeaFilename, 'r') as fNmea :
                 else :
                     # On n'a jamais vu ce truc...
                     pass
+                ##  Fourniture d'un dictionnaire dont les clefs sont prérenseignées, et les valeurs a None
+                dPivotsSorted[ep] = getDictEpoch()
+                dPivotsSorted[ep]['ts'] = ts
+            
             # print("!ep2", ep)
-            
-            dPivotsSorted[ep] = ts
-            
+            ##  Extraire les infos de la ligne, pour les affecter au dictionnaire de la periode de temps en cours
+            # Fonction generique de traitement du candidat
+            if (ep != 0) :
+                retCode = xtrInfos(candidat, line, dPivotsSorted[ep])
+                if (retCode is None) :
+                    pass
+                    # print("Traitement non prevu pour candidat :", line, file=sys.stderr)
+                    # TODO
+                    
+                    
+                    
+                else :
+                    pass
+                    print("retCode :", retCode, file=sys.stderr)
+   
 
 
 
@@ -554,4 +583,3 @@ with open(nmeaFilename, 'r') as fNmea :
 
 for k in dPivotsSorted :
     print(dPivotsSorted[k])
-

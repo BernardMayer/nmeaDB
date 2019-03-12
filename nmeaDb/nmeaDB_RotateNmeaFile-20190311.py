@@ -1,4 +1,4 @@
-ï»¿#!/python
+#!/python
 # -*- coding: utf-8 -*-
 
 ### http://sametmax.com/lencoding-en-python-une-bonne-fois-pour-toute/
@@ -106,7 +106,7 @@ mTimeIso = time.strftime("%Y%m%d%H%M%S", mTimeStruct)
 basename = os.path.basename(nmeaFilename)
 
 ##
-## (option) Timestamp en epoch au dÃ©but et/ou en TS Ã  la fin de chaque ligne NMEA
+## (option) Timestamp en epoch au début et/ou en TS à la fin de chaque ligne NMEA
 ##
 
 ##  Place disponible (2 x la taille du fichier)
@@ -140,7 +140,7 @@ $GPRMC	055827.000,A,4715,0596,N,131,7996,W,23,3,356,0,261115,,,N*43
 $GPRMC	055927.000,A,4715,3027,N,131,7799,W,13,6,5,0,261115,,,N*4C
 
 $IIZDA,hhmmss.ss,xx,xx,xxxx,,*hh
-       I         I  I  I_AnnÃ©e
+       I         I  I  I_Année
        I         I  I_Mois
        I         I_jour
        I_Heure
@@ -233,13 +233,13 @@ dPivot['ZDA'] = None
 
 #############################################################################
 def dms2dd(d, m, s):
-    """Convertit un angle "degrÃ©s minutes secondes" en "degrÃ©s dÃ©cimaux"
+    """Convertit un angle "degrés minutes secondes" en "degrés décimaux"
     """
     return d + m/60 + s/3600
  
 #############################################################################
 def dd2dms(dd):
-    """Convertit un angle "degrÃ©s dÃ©cimaux" en "degrÃ©s minutes secondes"
+    """Convertit un angle "degrés décimaux" en "degrés minutes secondes"
     """
     d = int(dd)
     x = (dd-d)*60
@@ -249,26 +249,26 @@ def dd2dms(dd):
  
 #############################################################################
 def deg2rad(dd):
-    """Convertit un angle "degrÃ©s dÃ©cimaux" en "radians"
+    """Convertit un angle "degrés décimaux" en "radians"
     """
     return dd/180*pi
  
 #############################################################################
 def rad2deg(rd):
-    """Convertit un angle "radians" en "degrÃ©s dÃ©cimaux"
+    """Convertit un angle "radians" en "degrés décimaux"
     """
     return rd/pi*180
  
 #############################################################################
 def distanceGPS(latA, longA, latB, longB):
-    """Retourne la distance en mÃ¨tres entre les 2 points A et B connus grÃ¢ce Ã 
-       leurs coordonnÃ©es GPS (en radians).
+    """Retourne la distance en mètres entre les 2 points A et B connus grâce à
+       leurs coordonnées GPS (en radians).
     """
-    # Rayon de la terre en mÃ¨tres (sphÃ¨re IAG-GRS80) WGS84
+    # Rayon de la terre en mètres (sphère IAG-GRS80) WGS84
     RT = 6378137
     # angle en radians entre les 2 points
     S = acos(sin(latA)*sin(latB) + cos(latA)*cos(latB)*cos(abs(longB-longA)))
-    # distance entre les 2 points, comptÃ©e sur un arc de grand cercle
+    # distance entre les 2 points, comptée sur un arc de grand cercle
     return S * RT
  
 #############################################################################
@@ -277,7 +277,7 @@ def DMd2Dd(dmd) :
     # DDDMM.d --> DDD.d (S or W negative values)
     # 10601.6986 ---> 106+1.6986/60 = 106.02831 degrees
     # "GLL": "4730.189,N,223.183,W"
-    # 0.001 represente 110m x 78m (lat 45Â°)
+    # 0.001 represente 110m x 78m (lat 45°)
     # 0.0001 represente 11m x 7/8m
     dotPos = dmd.find(".")
     D = float(dmd[0:dotPos - 2])
@@ -900,9 +900,9 @@ try :
 
     """
         Type de trames pour marquage temporel et spatial
-    Les trames dÃ©pendent des Ã©quipements.
-    On part du postulat qu'un GPS est plus probablement prÃ©sent que d'autres Ã©quipements
-    Les trames de type $GP seront donc utilisÃ©es en prioritÃ© par rapport aux trames $II
+    Les trames dépendent des équipements.
+    On part du postulat qu'un GPS est plus probablement présent que d'autres équipements
+    Les trames de type $GP seront donc utilisées en priorité par rapport aux trames $II
     $GPRMC dt + xy (ou $EC)
     $GPRMC,083717.00,A,4740.29142,N,00321.22402,W,4.418,234.15,070618,,,D*7E
     $ECRMC,051703,A,4743.597,N,00321.014,W,0.000,351.000,080618,1.064,W*6E
@@ -914,7 +914,7 @@ try :
     $GPGGA xy (time sans date)
     $GPGGA,083718,4740.2898,N,00321.2259,W,1,12,0.8,1.7,M,49.5,M,,*50
     Les n premieres lignes du fichier seront parcourues,
-    afin de dÃ©terminer quel type de trammes sera pris en compte.
+    afin de déterminer quel type de trammes sera pris en compte.
     """
     ##  Marquage spatial et temporel
     xydt = False
