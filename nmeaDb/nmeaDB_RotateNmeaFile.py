@@ -179,61 +179,61 @@ $PMGNS, $PSRT
 
 def getDictEpoch() :
     dPivot = dict()
-    dPivot['ep'] = None
-    dPivot['ts'] = None #0.0
+    dPivot['ep'] = list()
+    dPivot['ts'] = list() #0.0
     # dPivot['lat'] = None #0.0
     # dPivot['lon'] = None #0.0
     # dPivot['d-1'] = None #0
     # dPivot['d+10'] = None #0
     # dPivot['d+60'] = None #0
     # dPivot['ZDAepoch'] = None #0
-    dPivot['ECAPB'] = None
-    dPivot['GPAPB'] = None
+    dPivot['ECAPB'] = list()
+    dPivot['GPAPB'] = list()
     # dPivot['BOD'] = None
-    dPivot['DBT'] = None #0.0
+    dPivot['IIDBT'] = list() #0.0
     # dPivot['DPT'] = None
     # dPivot['HDG'] = None #0.0
-    dPivot['HDM'] = None #0.0
+    dPivot['IIHDM'] = list() #0.0
     # dPivot['GBS'] = None
     # dPivot['GGA'] = None
-    # dPivot['GLL'] = None #""
-    dPivot['GLLlatNum'] = None #0.0
-    dPivot['GLLlonNum'] = None #0.0
+    dPivot['IIGLL'] = list() #""
+    dPivot['IIGLLlatNum'] = list() #0.0
+    dPivot['IIGLLlonNum'] = list() #0.0
     # dPivot['GSA'] = None
     # dPivot['GSV'] = None
     # dPivot['HDG'] = None #0.0
-    dPivot['HDM'] = None #0.0
-    dPivot['MTA'] = None #0.0
-    dPivot['MTW'] = None #0.0
+    dPivot['IIHDM'] = list() #0.0
+    dPivot['IIMTA'] = list() #0.0
+    dPivot['IIMTW'] = list() #0.0
     # dPivot['MWD'] = None
-    dPivot['MWDtws'] = None #0.0
-    dPivot['MWDtwd'] = None #0.0
+    dPivot['IIMWDtws'] = list() #0.0
+    dPivot['IIMWDtwd'] = list() #0.0
     # dPivot['MWV'] = None
-    dPivot['ECRMB'] = None
-    dPivot['GPRMB'] = None
+    # dPivot['ECRMB'] = None
+    # dPivot['GPRMB'] = None
     # dPivot['RMC'] = None
-    dPivot['GPRMCts'] = None #0
-    dPivot['GPRMClatlon'] = None #""
-    dPivot['GPRMClatNum'] = None #0.0
-    dPivot['GPRMClonNum'] = None #0.0
-    dPivot['GPRMCsog'] = None #0.0
-    dPivot['GPRMCtmg'] = None #0.0
+    dPivot['GPRMCts'] = list() #0
+    dPivot['GPRMClatlon'] = list() #""
+    dPivot['GPRMClatNum'] = list() #0.0
+    dPivot['GPRMClonNum'] = list() #0.0
+    dPivot['GPRMCsog'] = list() #0.0
+    dPivot['GPRMCtmg'] = list() #0.0
     # dPivot['RTE'] = None
     # dPivot['TXT'] = None
-    dPivot['VHW'] = None
-    dPivot['VLW'] = None #0.0
-    dPivot['VLWtotal'] = None #0.0
-    dPivot['VTG'] = None
+    dPivot['IIVHW'] = list()
+    dPivot['IIVLW'] = list() #0.0
+    dPivot['IIVLWtotal'] = list() #0.0
+    dPivot['IIVTG'] = list()
     # dPivot['VWR'] = None
-    dPivot['VWRrl'] = None #""
-    dPivot['VWRawa'] = None #0.0
-    dPivot['VWRaws'] = None #0.0
+    dPivot['IIVWRrl'] = list() #""
+    dPivot['IIVWRawa'] = list() #0.0
+    dPivot['IIVWRaws'] = list() #0.0
     # dPivot['VWT'] = None
-    dPivot['VWTrl'] = None #""
-    dPivot['VWTtwa'] = None #0.0
-    dPivot['VWTtws'] = None #0.0
+    dPivot['IIVWTrl'] = list() #""
+    dPivot['IIVWTtwa'] = list() #0.0
+    dPivot['IIVWTtws'] = list() #0.0
     # dPivot['WPL'] = None
-    dPivot['ZDA'] = None
+    dPivot['IIZDA'] = list()
     # dPivot[''] = None
     # dPivot[''] = None
     # dPivot[''] = None
@@ -378,70 +378,70 @@ def xtrInfos(candidat, line, dP) :
     
     # 
     if (candidat == 'ECAPB' and lTmp[1] == 'A' and lTmp[2] == 'A') :
-        dp['ECAPB'] = line
+        dp['ECAPB'].append(line)
         return candidat + " = " + line 
     if (candidat == 'GPAPB' and lTmp[1] == 'A' and lTmp[2] == 'A') :
-        dp['GPAPB'] = line
+        dp['GPAPB'].append(line)
         return candidat + " = " + line
     if (candidat == 'ECRMB' and lTmp[1] == 'A') :
-        dp['ECRMB'] = line
+        dp['ECRMB'].append(line)
         return candidat + " = " + line
     if (candidat == 'GPRMB' and lTmp[1] == 'A') :
-        dp['GPRMB'] = line
+        dp['GPRMB'].append(line)
         return candidat + " = " + line
 
     if (candidat == 'IIVHW') :
-        dP['VHW'] = float(lTmp[5])
+        dP['IIVHW'].append(float(lTmp[5]))
         return candidat + " = " + lTmp[5] + " dans " + line
     if (candidat == 'IIVLW') :
-        dP['VLW'] = float(lTmp[3])
-        dP['VLWtotal'] = float(lTmp[1])
+        dP['IIVLW'].append(float(lTmp[3]))
+        dP['IIVLWtotal'].append(float(lTmp[1]))
         return candidat + " = " + lTmp[3] + " VLWtotal = " + lTmp[1] + " dans " + line
     if (candidat == 'IIDBT') :
-        dP['DBT'] = float(lTmp[3])
+        dP['IIDBT'].append(float(lTmp[3]))
         return candidat + " = " + lTmp[3] + " dans " + line
     if (candidat == 'IIMTW') :
-        dP['MTW'] = float(lTmp[1])
+        dP['IIMTW'].append(float(lTmp[1]))
         return candidat + " = " + lTmp[1] + " dans " + line
     if (candidat == 'IIVWR') :
-        dP['VWRrl'] = lTmp[2]
+        dP['IIVWRrl'].append(lTmp[2])
         if (lTmp[2] == 'L') :
-            dP['VWRawa'] = -float(lTmp[1])
+            dP['IIVWRawa'].append(-float(lTmp[1]))
         else :
-            dP['VWRawa'] = float(lTmp[1])
-        dP['VWRaws'] = float(lTmp[3])
-        return candidat + " VWRawa = " + str(dP['VWRawa']) + " VWRrl = " + lTmp[2] + " VWRaws = " + lTmp[3] + " dans " + line
+            dP['IIVWRawa'].append(float(lTmp[1]))
+        dP['IIVWRaws'].append(float(lTmp[3]))
+        return candidat + " IIVWRawa = " + str(dP['IIVWRawa']) + " VWRrl = " + lTmp[2] + " VWRaws = " + lTmp[3] + " dans " + line
     if (candidat == 'IIMWD') :
-        dP['MWDtwd'] = float(lTmp[3])
-        dP['MWDtws'] = float(lTmp[5])
-        return candidat + " MWDtwd = " + lTmp[3] + " MWDtws = " + lTmp[5] + " dans " + line
+        dP['IIMWDtwd'].append(float(lTmp[3]))
+        dP['IIMWDtws'].append(float(lTmp[5]))
+        return candidat + " IIMWDtwd = " + lTmp[3] + " IIMWDtws = " + lTmp[5] + " dans " + line
     if (candidat == 'IIVWT') :
-        dP['VWTrl'] = lTmp[2]
+        dP['IIVWTrl'].append(lTmp[2])
         if (lTmp[2] == 'L') :
-            dP['VWTtwa'] = -float(lTmp[1])
+            dP['IIVWTtwa'].append(-float(lTmp[1]))
         else :
-            dP['VWTtwa'] = float(lTmp[1])
-        dP['VWTtws'] = float(lTmp[3])
-        return candidat + " VWTtwa = " + str(dP['VWTtwa']) + " VWTrl = " + lTmp[2] + " VWTtws = " + lTmp[3] + " dans " + line
+            dP['IIVWTtwa'].append(float(lTmp[1]))
+        dP['IIVWTtws'].append(float(lTmp[3]))
+        return candidat + " IIVWTtwa = " + str(dP['IIVWTtwa']) + " IIVWTrl = " + lTmp[2] + " IIVWTtws = " + lTmp[3] + " dans " + line
     if (candidat == 'IIMTA') :
-        dP['MTA'] = float(lTmp[1])
+        dP['IIMTA'].append(float(lTmp[1]))
         return candidat + " = " + lTmp[1] + " dans " + line
     if (candidat == 'IIHDM') :
-        dP['HDM'] = float(lTmp[1])
+        dP['IIHDM'].append(float(lTmp[1]))
         return candidat + " = " + lTmp[1] + " dans " + line
     if (candidat == 'IIGLL') :
         # $GPGLL,4740.2898,N,00321.2259,W,083718,A,A*50
         if (lTmp[6] == 'A') :
-            dP[candidat] = str(float(lTmp[1])) + "," + lTmp[2] + "," + str(float(lTmp[3])) + "," + lTmp[4]
+            dP[candidat].append(str(float(lTmp[1])) + "," + lTmp[2] + "," + str(float(lTmp[3])) + "," + lTmp[4])
             if (lTmp[2] == 'S') :
-                dP['GLLlatNum'] = DMd2Dd("-" + lTmp[1]) #float("-" + lTmp[1]) / 100.0
+                dP['IIGLLlatNum'].append(DMd2Dd("-" + lTmp[1])) #float("-" + lTmp[1]) / 100.0
             else :
-                dP['GLLlatNum'] = DMd2Dd(lTmp[1]) #float(lTmp[1]) / 100.0
+                dP['IIGLLlatNum'].append(DMd2Dd(lTmp[1])) #float(lTmp[1]) / 100.0
             if (lTmp[4] == 'W') :
-                dP['GLLlonNum'] = DMd2Dd("-" + lTmp[3]) #float("-" + lTmp[3]) / 100.0
+                dP['IIGLLlonNum'].append(DMd2Dd("-" + lTmp[3])) #float("-" + lTmp[3]) / 100.0
             else :
-                dP['GLLlonNum'] = DMd2Dd(lTmp[3]) #float(lTmp[3]) / 100.0
-            return candidat + " = " +  dP[candidat] + " dans " + line
+                dP['IIGLLlonNum'].append(DMd2Dd(lTmp[3])) #float(lTmp[3]) / 100.0
+            return candidat + " = " +  str(dP[candidat]) + " dans " + line
         else :
             return None
     if (candidat == 'IIMWV') :
@@ -460,16 +460,9 @@ def xtrInfos(candidat, line, dP) :
         # $GPRMC,091930.00,A,4728.86549,N,00232.55440,W,5.248,201.64,010618,,,D*73
         ##  Info de nav, vont dans le dict() general
         if (lTmp[7] != "") :
-            dP['GPRMCsog'] = lTmp[7]
+            dP['GPRMCsog'].append(lTmp[7])
         if (lTmp[8] != "") :
-            dP['GPRMCtmg'] = lTmp[8]#round(float(lTmp[8]), 0)
-        # dPivot['GPRMCts'] = None #0
-        # dPivot['GPRMClatlon'] = None #""
-        # dPivot['GPRMClatNum'] = None #0.0
-        # dPivot['GPRMClonNum'] = None #0.0
-
-            
-            
+            dP['GPRMCtmg'].append(lTmp[8])#round(float(lTmp[8]), 0)
         return candidat + " = SOG et TMG"
     if (candidat == 'GPGBS') :
         # $GPGBS,091930.00,1.6,1.5,2.8,,,,*4A
@@ -501,7 +494,22 @@ def getEpochFromIIZDA(line) :
     ep = (dt - dt1970).total_seconds() + 0.0
     print("ZDA [", line, "] ts", ts, "    ep", ep, file=sys.stderr)
     return (ts, ep)
-    
+
+"""
+>>> S = [5,7,1,3,5,2]
+>>> mediane(S)
+4.0
+"""
+def mediane(L):
+    L.sort()
+    N = len(L)
+    n = N/2.0
+    p = int(n)
+    if n == p:
+        return (L[p-1]+L[p])/2.0
+    else:
+        return L[p]
+        
 # dPivot = getDictEpoch()
 nbrGll = nbrRmc = nbrRmcUsed = nbrGllAndRmc = 0
 ts = ep = 0        
@@ -521,6 +529,9 @@ with open(nmeaFilename, 'r') as fNmea :
             candidat = line[1:6]
             # print("candidat ? [" + candidat + "]" + TAB + "[" + srcEpoch + "]")
             # print("ep", ep, "       line", line)
+            ##  La ligne est-elle valide ?
+            if (line[-3:-2] != "*") :
+                continue
             if (candidat == srcEpoch) :
                 ##  ? Reference de temps ?
                 # print("candidat == srcEpoch")
