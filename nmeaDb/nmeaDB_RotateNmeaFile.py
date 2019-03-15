@@ -167,8 +167,8 @@ dJson['nmeaFilename'] = nmeaFilename
 dRMCs = dict()
 candidatVoulu = 'ZDA'
 
+lPivots = list()
 dPivots = dict()
-
 dPivotsSorted = collections.OrderedDict()
 """
 !AIVDM, !AIVDO, $AIALR, $AITXT
@@ -179,6 +179,7 @@ $PMGNS, $PSRT
 
 def getDictEpoch() :
     dPivot = dict()
+    dPivot['ep'] = None
     dPivot['ts'] = None #0.0
     # dPivot['lat'] = None #0.0
     # dPivot['lon'] = None #0.0
@@ -188,7 +189,7 @@ def getDictEpoch() :
     # dPivot['ZDAepoch'] = None #0
     dPivot['ECAPB'] = None
     dPivot['GPAPB'] = None
-    dPivot['BOD'] = None
+    # dPivot['BOD'] = None
     dPivot['DBT'] = None #0.0
     # dPivot['DPT'] = None
     # dPivot['HDG'] = None #0.0
@@ -204,10 +205,10 @@ def getDictEpoch() :
     dPivot['HDM'] = None #0.0
     dPivot['MTA'] = None #0.0
     dPivot['MTW'] = None #0.0
-    dPivot['MWD'] = None
+    # dPivot['MWD'] = None
     dPivot['MWDtws'] = None #0.0
     dPivot['MWDtwd'] = None #0.0
-    dPivot['MWV'] = None
+    # dPivot['MWV'] = None
     dPivot['ECRMB'] = None
     dPivot['GPRMB'] = None
     # dPivot['RMC'] = None
@@ -223,11 +224,11 @@ def getDictEpoch() :
     dPivot['VLW'] = None #0.0
     dPivot['VLWtotal'] = None #0.0
     dPivot['VTG'] = None
-    dPivot['VWR'] = None
+    # dPivot['VWR'] = None
     dPivot['VWRrl'] = None #""
     dPivot['VWRawa'] = None #0.0
     dPivot['VWRaws'] = None #0.0
-    dPivot['VWT'] = None
+    # dPivot['VWT'] = None
     dPivot['VWTrl'] = None #""
     dPivot['VWTtwa'] = None #0.0
     dPivot['VWTtws'] = None #0.0
@@ -482,7 +483,7 @@ def getEpochFromGPRMC(line) :
     global dt1970
     lTmp = line.split(",")
     # $GPRMC,072648.00,A,4730.18648,N,00223.18287,W,0.049,46.36,010618,,,A*43
-    ts = float("20" + lTmp[9][4:6] + lTmp[9][2:4] + lTmp[9][0:2] + lTmp[1][0:2] + lTmp[1][2:4] + lTmp[1][4:] + ".0")
+    ts = float("20" + lTmp[9][4:6] + lTmp[9][2:4] + lTmp[9][0:2] + lTmp[1][0:2] + lTmp[1][2:4] + lTmp[1][4:])
     dt = datetime.datetime(2000 + int(lTmp[9][4:6]), int(lTmp[9][2:4]), int(lTmp[9][0:2]), int(lTmp[1][0:2]), int(lTmp[1][2:4]), int(lTmp[1][4:6]), int(lTmp[1][7:]))
     ep = (dt - dt1970).total_seconds() + 0.0
     # print("epoch : [", ep, "]", file=sys.stderr)
