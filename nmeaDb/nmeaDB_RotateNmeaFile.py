@@ -63,13 +63,14 @@ LatLonPrefered = "GLL"
 ## fichier a traiter
 me = sys.argv[0]
 #args = sys.argv[1:]
-if (len(sys.argv) != 3) :
+if (len(sys.argv) < 3) :
     print(me + " : Pas le bon nombre de parametres.", file=sys.stderr)
-    print("Usage : " + me + " <Chemin et nom du fichier NMEA> <identifiant nmea reference de temps (GPRMC, IIGLL, ..)>", file=sys.stderr)
+    print("Usage : " + me + " <Chemin et nom du fichier NMEA> <identifiant nmea reference de temps (GPRMC, IIGLL, ..)> <identifiant nmea reference de position (GPRMC, IIGLL, ..)>", file=sys.stderr)
     quit()
 else :
     nmeaFilename = sys.argv[1]
     srcEpoch = sys.argv[2]
+    srcPos = None
     if (srcEpoch[0:1] == "$") :
         srcEpoch = srcEpoch[1:]
     srcEpoch = srcEpoch.upper()
@@ -77,8 +78,19 @@ else :
         print("I;Reference de temps a partir de NMEA [" + srcEpoch + "] depuis le ficher NMEA [" + nmeaFilename + "]", file=sys.stderr)
     else :
         print(me + " ", file=sys.stderr)
-        print("Usage : " + me + " <Chemin et nom du fichier NMEA> <identifiant nmea reference de temps (GPRMC, IIZDA, ..)>", file=sys.stderr)
+        print("Usage : " + me + " <Chemin et nom du fichier NMEA> <identifiant nmea reference de temps (GPRMC, IIZDA, ..)> <identifiant nmea reference de position (GPRMC, IIGLL, ..)>", file=sys.stderr)
         quit()
+    if (len(sys.argv) == 4) :
+        srcPos = sys.argv[3]
+        if (srcPos[0:1] == "$") :
+            srcPos = srcPos[1:]
+        srcPos = srcPos.upper()
+        if (len(srcPos) == 5) :
+            print("I;Reference de position a partir de NMEA [" + srcPos + "] depuis le ficher NMEA [" + nmeaFilename + "]", file=sys.stderr)
+        else :
+            print(me + " ", file=sys.stderr)
+            print("Usage : " + me + " <Chemin et nom du fichier NMEA> <identifiant nmea reference de temps (GPRMC, IIZDA, ..)> <identifiant nmea reference de position (GPRMC, IIGLL, ..)>", file=sys.stderr)
+            quit()
 
 ## Tests prealables, fichier NMEA 
 if (not os.path.exists(nmeaFilename)) :
@@ -179,7 +191,8 @@ $PMGNS, $PSRT
 
 def getDictEpoch() :
     dPivot = dict()
-    dPivot['ep'] = list()
+    dPivot['nLine'] = None
+    # dPivot['ep'] = list()
     dPivot['ts'] = list() #0.0
     # dPivot['lat'] = None #0.0
     # dPivot['lon'] = None #0.0
@@ -196,7 +209,7 @@ def getDictEpoch() :
     dPivot['IIHDM'] = list() #0.0
     # dPivot['GBS'] = None
     # dPivot['GGA'] = None
-    dPivot['IIGLL'] = list() #""
+    # dPivot['IIGLL'] = list() #""
     dPivot['IIGLLlatNum'] = list() #0.0
     dPivot['IIGLLlonNum'] = list() #0.0
     # dPivot['GSA'] = None
@@ -212,18 +225,19 @@ def getDictEpoch() :
     # dPivot['ECRMB'] = None
     # dPivot['GPRMB'] = None
     # dPivot['RMC'] = None
-    dPivot['GPRMCts'] = list() #0
-    dPivot['GPRMClatlon'] = list() #""
-    dPivot['GPRMClatNum'] = list() #0.0
-    dPivot['GPRMClonNum'] = list() #0.0
-    dPivot['GPRMCsog'] = list() #0.0
-    dPivot['GPRMCtmg'] = list() #0.0
+    dPivot['RMCep'] = list() #0.0
+    dPivot['RMCts'] = list() #0.0
+    dPivot['RMClatlon'] = list() #""
+    dPivot['RMClatNum'] = list() #0.0
+    dPivot['RMClonNum'] = list() #0.0
+    dPivot['RMCsog'] = list() #0.0
+    dPivot['RMCtmg'] = list() #0.0
     # dPivot['RTE'] = None
     # dPivot['TXT'] = None
     dPivot['IIVHW'] = list()
     dPivot['IIVLW'] = list() #0.0
     dPivot['IIVLWtotal'] = list() #0.0
-    dPivot['IIVTG'] = list()
+    # dPivot['IIVTG'] = list()
     # dPivot['VWR'] = None
     dPivot['IIVWRrl'] = list() #""
     dPivot['IIVWRawa'] = list() #0.0
@@ -233,7 +247,9 @@ def getDictEpoch() :
     dPivot['IIVWTtwa'] = list() #0.0
     dPivot['IIVWTtws'] = list() #0.0
     # dPivot['WPL'] = None
-    dPivot['IIZDA'] = list()
+    # dPivot['IIZDA'] = list()
+    dPivot['ZDAep'] = list()
+    dPivot['ZDAts'] = list()
     # dPivot[''] = None
     # dPivot[''] = None
     # dPivot[''] = None
@@ -432,7 +448,7 @@ def xtrInfos(candidat, line, dP) :
     if (candidat == 'IIGLL') :
         # $GPGLL,4740.2898,N,00321.2259,W,083718,A,A*50
         if (lTmp[6] == 'A') :
-            dP[candidat].append(str(float(lTmp[1])) + "," + lTmp[2] + "," + str(float(lTmp[3])) + "," + lTmp[4])
+            # dP[candidat].append(str(float(lTmp[1])) + "," + lTmp[2] + "," + str(float(lTmp[3])) + "," + lTmp[4])
             if (lTmp[2] == 'S') :
                 dP['IIGLLlatNum'].append(DMd2Dd("-" + lTmp[1])) #float("-" + lTmp[1]) / 100.0
             else :
@@ -441,7 +457,7 @@ def xtrInfos(candidat, line, dP) :
                 dP['IIGLLlonNum'].append(DMd2Dd("-" + lTmp[3])) #float("-" + lTmp[3]) / 100.0
             else :
                 dP['IIGLLlonNum'].append(DMd2Dd(lTmp[3])) #float(lTmp[3]) / 100.0
-            return candidat + " = " +  str(dP[candidat]) + " dans " + line
+            return candidat + " dans " + line
         else :
             return None
     if (candidat == 'IIMWV') :
@@ -460,9 +476,49 @@ def xtrInfos(candidat, line, dP) :
         # $GPRMC,091930.00,A,4728.86549,N,00232.55440,W,5.248,201.64,010618,,,D*73
         ##  Info de nav, vont dans le dict() general
         if (lTmp[7] != "") :
-            dP['GPRMCsog'].append(lTmp[7])
+            dP['RMCsog'].append(lTmp[7])
         if (lTmp[8] != "") :
-            dP['GPRMCtmg'].append(lTmp[8])#round(float(lTmp[8]), 0)
+            dP['RMCtmg'].append(lTmp[8])#round(float(lTmp[8]), 0)
+        ##  TODO
+        """        
+        $GPRMC,193428,A,4729.9205,N,00222.6770,W,0.0,143.5,200917,2.9,W,D*1C
+
+               1         2 3       4 5        6 7   8   9    10  11|
+               |         | |       | |        | |   |   |    |   | |
+        $--RMC,hhmmss.ss,A,llll.ll,a,yyyyy.yy,a,x.x,x.x,xxxx,x.x,a*hh
+        1) Time (UTC)
+        2) Status, V = Navigation receiver warning
+        3) Latitude
+        4) N or S
+        5) Longitude
+        6) E or W
+        7) Speed over ground, knots
+        8) Track made good, degrees true
+        9) Date, ddmmyy
+        10) Magnetic Variation, degrees
+        11) E or W
+        """
+        # dPivot['RMCep'] = list() #0
+        # dPivot['RMCts'] = list() #0
+        # dPivot['RMClatlon'] = list() #""
+        # dPivot['RMClatNum'] = list() #0.0
+        # dPivot['RMClonNum'] = list() #0.0
+        # $GPGLL,4740.2898,N,00321.2259,W,083718,A,A*50
+        if (lTmp[2] == 'A') :
+            dP['RMClatlon'].append(str(float(lTmp[3])) + "," + lTmp[4] + "," + str(float(lTmp[5])) + "," + lTmp[6])
+            if (lTmp[4] == 'S') :
+                dP['RMClatNum'].append(DMd2Dd("-" + lTmp[3])) #float("-" + lTmp[1]) / 100.0
+            else :
+                dP['RMClatNum'].append(DMd2Dd(lTmp[3])) #float(lTmp[1]) / 100.0
+            if (lTmp[6] == 'W') :
+                dP['RMClonNum'].append(DMd2Dd("-" + lTmp[5])) #float("-" + lTmp[3]) / 100.0
+            else :
+                dP['RMClonNum'].append(DMd2Dd(lTmp[5])) #float(lTmp[3]) / 100.0
+            (dP['RMCep'], dP['RMCts']) = getEpochFromGPRMC(line)
+            
+            return candidat + " dans " + line
+        else :
+            return None
         return candidat + " = SOG et TMG"
     if (candidat == 'GPGBS') :
         # $GPGBS,091930.00,1.6,1.5,2.8,,,,*4A
@@ -470,6 +526,9 @@ def xtrInfos(candidat, line, dP) :
     if (candidat == 'IIVTG') :
         # $IIVTG,046.,T,,M,03.5,N,06.5,K,A*2D
         return candidat + " = pas necessaire"
+    if (candidat == 'IIZDA') :
+        (dP['ZDAep'], dP['ZDAts']) = getEpochFromIIZDA(line)
+        return candidat + TAB + line
     return None
 
 def getEpochFromGPRMC(line) :
@@ -480,7 +539,7 @@ def getEpochFromGPRMC(line) :
     dt = datetime.datetime(2000 + int(lTmp[9][4:6]), int(lTmp[9][2:4]), int(lTmp[9][0:2]), int(lTmp[1][0:2]), int(lTmp[1][2:4]), int(lTmp[1][4:6]), int(lTmp[1][7:]))
     ep = (dt - dt1970).total_seconds() + 0.0
     # print("epoch : [", ep, "]", file=sys.stderr)
-    return (ts, ep)
+    return (ep, ts)
 
 def getEpochFromECRMC(line) :
     return (getEpochFromGPRMC(line))
@@ -493,7 +552,7 @@ def getEpochFromIIZDA(line) :
     dt = datetime.datetime(int(lTmp[4]), int(lTmp[3]), int(lTmp[2]), int(lTmp[1][0:2]), int(lTmp[1][2:4]), int(lTmp[1][4:6]))
     ep = (dt - dt1970).total_seconds() + 0.0
     print("ZDA [", line, "] ts", ts, "    ep", ep, file=sys.stderr)
-    return (ts, ep)
+    return (ep, ts)
 
 """
 >>> S = [5,7,1,3,5,2]
@@ -502,13 +561,16 @@ def getEpochFromIIZDA(line) :
 """
 def mediane(L):
     L.sort()
+    # L = sorted(L)
     N = len(L)
     n = N/2.0
     p = int(n)
-    if n == p:
-        return (L[p-1]+L[p])/2.0
-    else:
-        return L[p]
+    # if n == p:
+        # return (L[p-1]+L[p])/2.0
+    # else:
+        # return L[p]
+    return L[p]
+
         
 # dPivot = getDictEpoch()
 nbrGll = nbrRmc = nbrRmcUsed = nbrGllAndRmc = 0
@@ -568,6 +630,8 @@ with open(nmeaFilename, 'r') as fNmea :
                 ##  Fourniture d'un dictionnaire dont les clefs sont prérenseignées, et les valeurs a None
                 dPivotsSorted[ep] = getDictEpoch()
                 dPivotsSorted[ep]['ts'] = ts
+                ##  DEBUG
+                dPivotsSorted[ep]['nLine'] = nLine
             
             # print("!ep2", ep)
             ##  Extraire les infos de la ligne, pour les affecter au dictionnaire de la periode de temps en cours
@@ -578,20 +642,29 @@ with open(nmeaFilename, 'r') as fNmea :
                     pass
                     # print("Traitement non prevu pour candidat :", line, file=sys.stderr)
                     # TODO
-                    
-                    
-                    
                 else :
                     pass
                     print("retCode :", retCode, file=sys.stderr)
-   
-
-
-
-
-
 
 
 
 for k in dPivotsSorted :
-    print(dPivotsSorted[k])
+    #print(dPivotsSorted[k])
+    for tag in dPivotsSorted[k] :
+        if (type(dPivotsSorted[k][tag]) == list and len(dPivotsSorted[k][tag]) > 0) :
+            dPivotsSorted[k][tag] = mediane(dPivotsSorted[k][tag])
+    # print(dPivotsSorted[k])
+        
+dJson = dict()
+dJson['name'] = basename
+dJson['check'] = fileCheck
+dJson['mTime'] = mTimeIso
+dJson['nmeaFilename'] = nmeaFilename
+dJson['timeRef'] = srcEpoch
+dJson['posRef'] = srcPos
+##  JSON
+f = open(nmeaFilename + ".json", 'w')
+dJson['datas'] = dPivotsSorted
+# json.dump(dPivotsSorted, f, indent=2, separators=(", ", ": "))
+json.dump(dJson, f, indent=2, separators=(", ", ": "))  
+f.close()    

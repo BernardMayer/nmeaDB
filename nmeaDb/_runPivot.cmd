@@ -29,7 +29,7 @@
 %pyBin% ^
 	%appHome%\nmeaDB_RotateNmeaFile.py ^
 	%appHome%\datas\%nmeaFile% ^
-	GPRMC ^
+	IIZDA ^
 	1> %appHome%\doc_dev\%nmeaFile%.infos ^
 	2> %appHome%\%nmeaFile%.log
 	
