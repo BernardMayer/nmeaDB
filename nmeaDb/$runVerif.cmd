@@ -27,16 +27,22 @@
 @rem nmeaDB_RotateNmeaFile.py
 @rem 
 
+REM pushd %appHome%\datas
+REM for %%f in (*.nmea) do echo %%f
+REM popd
+
+REM pause
+
 pushd %appHome%\datas
-for %%f in (*.nmea) do echo %%f
+for %%f in (*.nmea) do %pyBin% %appHome%\nmeaDB_verifNmeaFile.py %appHome%\datas\%%f IIZDA 1> %appHome%\doc_dev\%%f.infos 2> %appHome%\%%f.log
 popd
 
 pause
 
-%pyBin% ^
-	%appHome%\nmeaDB_verifNmeaFile.py ^
-	%appHome%\datas\%nmeaFile% ^
-	IIZDA ^
-	1> %appHome%\doc_dev\%nmeaFile%.infos ^
-	2> %appHome%\%nmeaFile%.log
+	%pyBin% ^
+		%appHome%\nmeaDB_verifNmeaFile.py ^
+		%appHome%\datas\%nmeaFile% ^
+		IIZDA ^
+		1> %appHome%\doc_dev\%nmeaFile%.infos ^
+		2> %appHome%\%nmeaFile%.log
 	
