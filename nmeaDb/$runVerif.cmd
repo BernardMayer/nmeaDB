@@ -33,16 +33,19 @@ REM popd
 
 REM pause
 
-pushd %appHome%\datas
-for %%f in (*.nmea) do %pyBin% %appHome%\nmeaDB_verifNmeaFile.py %appHome%\datas\%%f IIZDA 1> %appHome%\doc_dev\%%f.infos 2> %appHome%\%%f.log
-popd
+%pyBin% ^
+	%appHome%\nmeaDB_verifNmeaFile.py ^
+	%appHome%\datas\%nmeaFile% ^
+	IIZDA ^
+	GPRMC ^
+	1> %appHome%\doc_dev\%nmeaFile%.infos ^
+	2> %appHome%\%nmeaFile%.log
 
-pause
 
-	%pyBin% ^
-		%appHome%\nmeaDB_verifNmeaFile.py ^
-		%appHome%\datas\%nmeaFile% ^
-		IIZDA ^
-		1> %appHome%\doc_dev\%nmeaFile%.infos ^
-		2> %appHome%\%nmeaFile%.log
+
+@rem pushd %appHome%\datas
+@rem for %%f in (*.nmea) do %pyBin% %appHome%\nmeaDB_verifNmeaFile.py %appHome%\datas\%%f IIZDA 1> %appHome%\doc_dev\%%f.infos 2> %appHome%\%%f.log
+@rem popd
+
+
 	

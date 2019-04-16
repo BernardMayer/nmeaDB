@@ -539,8 +539,36 @@ def getEpochFromIIZDA(line) :
         dtDecimales = len(lTmp[1]) - 6
     else :
         dtDecimales = 0
-    print("ZDA [", line, "] ts", ts, "    ep", ep, file=sys.stderr)
+    #print("ZDA [", line, "] ts", ts, "    ep", ep, file=sys.stderr)
     return (ep, ts, dtDecimales)
+
+def getPosiFromGPRMC(line) :
+    lTmp = line.split(",")
+    ##  $GPRMC,072648.00,A,4730.18648,N,00223.18287,W,0.049,46.36,010618,,,A*43
+    if (lTmp[2] != "A") :
+        return None
+    else :
+        if (lTmp[4] == "S") :
+            lTmp[3] = "-" + lTmp[3]
+        if (lTmp[6] == "W") :
+            lTmp[5] = "-" + lTmp[5]
+        return(float(lTmp[3]), float(lTmp[5]))
+        
+def getPosiFromECRMC(line) :
+    return(getPosiFromGPRMC(line))
+    
+    
+def getPosiFromIIGLL(line) :
+    lTmp = line.split(",")
+    ##  $IIGLL,4729.799,N,00222.958,W,111758,A,A*40
+    if (lTmp[6] != "A") :
+        return None
+    else :
+        if (lTmp[2] == "S") :
+            lTmp[1] = "-" + lTmp[1]
+        if (lTmp[4] == "W") :
+            lTmp[3] = "-" + lTmp[3]
+        return(float(lTmp[1]), float(lTmp[3]))    
     
 # dPivot = getDictEpoch()
 nbrGll = nbrRmc = nbrRmcUsed = nbrGllAndRmc = 0
@@ -553,18 +581,22 @@ dTimeRefs['IIZDA'] = [None, None, 0, None, None, 0, 0.0, 0]
 ep    = ts    = dtDeci    = 0  
 epTmp = tsTmp = dtDeciTmp = 0
 
-## dPosiRefs[<tag de position>] = 1ere ligne, derniere ligne, nbr de lignes, debut, fin, NW, SE, nbr decimales position
+## dPosiRefs[<tag de position>] = 1ere ligne, derniere ligne, nbr de lignes, --, --, LatMin, LonMin, LatMax, LonMax, nbr decimales position
 dPosiRefs = dict()
-dPosiRefs['GPRMC'] = [None, None, 0, None, None, 0.0, 0.0, 0]
-dPosiRefs['IIGLL'] = [None, None, 0, None, None, 0.0, 0.0, 0]
+dPosiRefs['GPRMC'] = [None, None, 0, None, None, 0.0, 0.0, 0.0, 0.0, 0]
+dPosiRefs['ECRMC'] = [None, None, 0, None, None, 0.0, 0.0, 0.0, 0.0, 0]
+dPosiRefs['IIGLL'] = [None, None, 0, None, None, 0.0, 0.0, 0.0, 0.0, 0]
+dPosiRefs['GPRMC'] = [None, None, 0, None, None, None, None]
+dPosiRefs['ECRMC'] = [None, None, 0, None, None, None, None]
+dPosiRefs['IIGLL'] = [None, None, 0, None, None, None, None]
 
 ## dict de tout les tags presents
 dTags = dict()
 
 
 with open(nmeaFilename, 'r') as fNmea :
-    nLine = nLineNmea = nLineDtRef = 0
-    nLineDtFirst = nLineDtLast = None
+    nLine = nLineNmea = nLineDtRef = nLineXyRef = 0
+    nLineDtFirst = nLineDtLast = nLineXyFirst = nLineXyLast = None
     for line in fNmea.readlines() :
         candidatDt = candidatXy = ""
         nLine += 1
@@ -586,7 +618,7 @@ with open(nmeaFilename, 'r') as fNmea :
                 dTags[candidatDt] = None
                 
             ##  Premier ou dernier des differents tags de position possible ?    
-            if candidatXy in dPosiRefs) :
+            if (candidatXy in dPosiRefs) :
                 if (dPosiRefs[candidatXy][0] is None) :
                     dPosiRefs[candidatXy][0] = nLine
                 else :
@@ -594,14 +626,40 @@ with open(nmeaFilename, 'r') as fNmea :
                 dPosiRefs[candidatXy][2] += 1
                 
                 # if (candidatXy != srcPosition) :
-                if (candidatXy) == "GPRMC") :
-                    pass
-                    # TODO
-                elif (candidatXy) == "IIGLL") :
-                    pass
-                    # TODO
+                if (candidatXy == "GPRMC") :
+                    (lat, lon) = getPosiFromGPRMC(line)
+                elif (candidatXy == "ECRMC") :
+                    (lat, lon) = getPosiFromECRMC(line)
+                elif (candidatXy == "IIGLL") :
+                    (lat, lon) = getPosiFromIIGLL(line)
+                # print("candidatXy =", candidatXy, ", lat =", lat, ", lon =", lon)
                 
+                if (dPosiRefs[candidatXy][3] is None) :
+                    dPosiRefs[candidatXy][3] = lat
+                else :
+                    dPosiRefs[candidatXy][3] = min(dPosiRefs[candidatXy][3], lat)
+                if (dPosiRefs[candidatXy][4] is None) :
+                    dPosiRefs[candidatXy][4] = lon
+                else :
+                    dPosiRefs[candidatXy][4] = min(dPosiRefs[candidatXy][4], lon)
+                if (dPosiRefs[candidatXy][5] is None) :
+                    dPosiRefs[candidatXy][5] = lat
+                else :
+                    dPosiRefs[candidatXy][5] = max(dPosiRefs[candidatXy][5], lat)
+                if (dPosiRefs[candidatXy][6] is None) :
+                    dPosiRefs[candidatXy][6] = lon
+                else :
+                    dPosiRefs[candidatXy][6] = max(dPosiRefs[candidatXy][6], lon)
                 
+                ##  ? Reference de position ?
+                if (candidatXy == srcPosition) :
+                    ##  Premiere ou derniere reference de temps ?
+                    if (nLineXyFirst is None) : 
+                        nLineXyFirst = nLine
+                    else :
+                        nLineXyLast = nLine
+                    nLineXyRef += 1
+                    
             # print("candidatDt ? [" + candidatDt + "]" + TAB + "[" + srcEpoch + "]")
             # print("ep", ep, "       line", line)
             ##  Premier ou dernier des differents tags de temps possible ?
@@ -625,7 +683,6 @@ with open(nmeaFilename, 'r') as fNmea :
                     (dTimeRefs[candidatDt][3]) = epTmp
                 else : 
                     (dTimeRefs[candidatDt][4]) = epTmp   
-    
                 
                 ##  ? Reference de temps ?
                 if (candidatDt == srcEpoch) :
@@ -689,24 +746,41 @@ with open(nmeaFilename, 'r') as fNmea :
 
 
 print("Pour [" + str(nLine) + "] lignes, [" + str(nLineNmea) + "] tags NMEA valides .", )
+"""
+Pour [369349] lignes, [342778] tags NMEA valides .
+"""
 print("La reference de temps (" + srcEpoch + ") compte [" + str(nLineDtRef) + "] lignes, de la ligne [" + str(nLineDtFirst) + "] a la ligne [" + str(nLineDtLast) + "]")
 if (nLineDtRef > 0 and nLineDtFirst is not None) :
     print(", soit une reference de temps toutes les " + str(round((nLineDtLast - nLineDtFirst) / nLineDtRef, 2)) + " lignes")
-## dTimeRefs[<tag de temps>] = [1ere ligne, derniere ligne, nbr de lignes, debut, fin, nbr de secondes, delai moyen]
-for k in (dTimeRefs) :
-    if (dTimeRefs[k][3] is not None and dTimeRefs[k][4] is not None) :
-        dTimeRefs[k][5] = round(dTimeRefs[k][4] - dTimeRefs[k][3], 1)
-        dTimeRefs[k][6] = round(dTimeRefs[k][5] / dTimeRefs[k][2], 1)
-    print(k, TAB, dTimeRefs[k])
+    ## dTimeRefs[<tag de temps>] = [1ere ligne, derniere ligne, nbr de lignes, debut, fin, nbr de secondes, delai moyen]
+    for k in (dTimeRefs) :
+        if (dTimeRefs[k][3] is not None and dTimeRefs[k][4] is not None) :
+            dTimeRefs[k][5] = round(dTimeRefs[k][4] - dTimeRefs[k][3], 1)
+            dTimeRefs[k][6] = round(dTimeRefs[k][5] / dTimeRefs[k][2], 1)
+        print(k, TAB, dTimeRefs[k])
 """
-Pour [369349] lignes, [342778] tags NMEA valides .
 La reference de temps (IIZDA) compte [22259] lignes, de la ligne [17] a la ligne [369348]
 , soit une reference de temps toutes les 16.59 lignes
-GPRMC 	 [2173, 369285, 6115]
-ECRMC 	 [None, None, 0]
-IIRMC 	 [None, None, 0]
-IIZDA 	 [17, 369348, 22259]
+GPRMC 	 [2173, 369285, 6115, 1527837978.0, 1527862281.0, 24303.0, 4.0, 0]
+ECRMC 	 [None, None, 0, None, None, 0, 0.0, 0]
+IIRMC 	 [None, None, 0, None, None, 0, 0.0, 0]
+IIZDA 	 [17, 369348, 22259, 1527837806.0, 1527862284.0, 24478.0, 1.1, 0]
 """
+print("La reference de position (" + srcPosition + ") compte [" + str(nLineXyRef) + "] lignes, de la ligne [" + str(nLineXyFirst) + "] a la ligne [" + str(nLineXyLast) + "]")
+if (nLineXyRef > 0 and nLineXyFirst is not None) :
+    print(", soit une reference de position toutes les " + str(round((nLineXyLast - nLineXyFirst) / nLineXyRef, 2)) + " lignes")
+    ## dPosiRefs[<tag de position>] = 1ere ligne, derniere ligne, nbr de lignes, LatMin, LonMin, LatMax, LonMax, nbr decimales position
+    for k in (dPosiRefs) :
+        print(k, TAB, dPosiRefs[k])
+"""
+La reference de position (GPRMC) compte [6115] lignes, de la ligne [2173] a la ligne [369285]
+, soit une reference de position toutes les 60.03 lignes
+GPRMC 	 [2173, 369285, 6115, 4723.92931, -238.21505, 4730.52287, -223.11555]
+ECRMC 	 [None, None, 0, None, None, None, None]
+IIGLL 	 [16, 369347, 22259, 4723.928, -238.215, 4730.523, -223.117]
+"""
+
+
 print(sorted(dTags))
 """
 ['AIALR', 'AITXT', 'GPGBS', 'GPRMC', 'GPTXT', 'IIDBT', 'IIDPT', 'IIGLL', 'IIHDG', 'IIHDM', 'IIMTA', 'IIMTW', 'IIMWD', 'IIMWV', 'IIVHW', 'IIVLW', 'IIVTG', 'IIVWR', 'IIVWT', 'IIZDA', 'PSRT,']
