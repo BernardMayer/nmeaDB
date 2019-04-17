@@ -554,22 +554,67 @@ def getEpochFromIIZDA(line) :
     print("ZDA [", line, "] ts", ts, "    ep", ep, file=sys.stderr)
     return (ep, ts)
 
+def getPosiFromGPRMC(line) :
+    lTmp = line.split(",")
+    ##  $GPRMC,072648.00,A,4730.18648,N,00223.18287,W,0.049,46.36,010618,,,A*43
+    if (lTmp[2] != "A") :
+        return None
+    else :
+        if (lTmp[4] == "S") :
+            lTmp[3] = "-" + lTmp[3]
+        if (lTmp[6] == "W") :
+            lTmp[5] = "-" + lTmp[5]
+        return(float(lTmp[3]), float(lTmp[5]))
+        
+def getPosiFromECRMC(line) :
+    return(getPosiFromGPRMC(line))
+    
+def getPosiFromIIGLL(line) :
+    lTmp = line.split(",")
+    ##  $IIGLL,4729.799,N,00222.958,W,111758,A,A*40
+    if (lTmp[6] != "A") :
+        return None
+    else :
+        if (lTmp[2] == "S") :
+            lTmp[1] = "-" + lTmp[1]
+        if (lTmp[4] == "W") :
+            lTmp[3] = "-" + lTmp[3]
+        return(float(lTmp[1]), float(lTmp[3]))    
+
 """
 >>> S = [5,7,1,3,5,2]
 >>> mediane(S)
 4.0
 """
-def mediane(L):
-    L.sort()
-    # L = sorted(L)
-    N = len(L)
-    n = N/2.0
+def mediane(maListe):
+    # http://kamelnaroun.free.fr/python.html
+    N = len(maListe)
+    if (N == 0) :
+        return None
+    if (N == 1) :
+        return maListe[0]
+    maListe.sort()
+    n = N / 2.0
     p = int(n)
-    # if n == p:
-        # return (L[p-1]+L[p])/2.0
+    # if (n == p) :
+        # return (maListe[p-1] + maListe[p]) / 2.0
     # else:
-        # return L[p]
-    return L[p]
+        # return maListe[p]
+    return maListe[p]
+    
+def moyenne(tableau):
+    # https://fr.wikibooks.org/wiki/Math%C3%A9matiques_avec_Python_et_Ruby/Statistique_inf%C3%A9rentielle_avec_Python
+    return sum(tableau, 0.0) / len(tableau)
+
+def variance(tableau):
+    # https://fr.wikibooks.org/wiki/Math%C3%A9matiques_avec_Python_et_Ruby/Statistique_inf%C3%A9rentielle_avec_Python
+    m=moyenne(tableau)
+    return moyenne([(x-m)**2 for x in tableau])
+    
+def ecartype(tableau):
+    # https://fr.wikibooks.org/wiki/Math%C3%A9matiques_avec_Python_et_Ruby/Statistique_inf%C3%A9rentielle_avec_Python
+    return variance(tableau)**0.5    
+    
 
         
 # dPivot = getDictEpoch()

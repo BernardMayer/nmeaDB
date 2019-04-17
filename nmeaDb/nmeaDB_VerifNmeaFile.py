@@ -557,7 +557,6 @@ def getPosiFromGPRMC(line) :
 def getPosiFromECRMC(line) :
     return(getPosiFromGPRMC(line))
     
-    
 def getPosiFromIIGLL(line) :
     lTmp = line.split(",")
     ##  $IIGLL,4729.799,N,00222.958,W,111758,A,A*40
@@ -569,6 +568,31 @@ def getPosiFromIIGLL(line) :
         if (lTmp[4] == "W") :
             lTmp[3] = "-" + lTmp[3]
         return(float(lTmp[1]), float(lTmp[3]))    
+
+def mediane(maListe):
+    # http://kamelnaroun.free.fr/python.html
+    maListe.sort()
+    N = len(maListe)
+    n = N/2.0
+    p = int(n)
+    if n == p:
+        return (maListe[p-1]+maListe[p])/2.0
+    else:
+        return maListe[p]
+
+def moyenne(tableau):
+    # https://fr.wikibooks.org/wiki/Math%C3%A9matiques_avec_Python_et_Ruby/Statistique_inf%C3%A9rentielle_avec_Python
+    return sum(tableau, 0.0) / len(tableau)
+
+def variance(tableau):
+    # https://fr.wikibooks.org/wiki/Math%C3%A9matiques_avec_Python_et_Ruby/Statistique_inf%C3%A9rentielle_avec_Python
+    m=moyenne(tableau)
+    return moyenne([(x-m)**2 for x in tableau])
+    
+def ecartype(tableau):
+    # https://fr.wikibooks.org/wiki/Math%C3%A9matiques_avec_Python_et_Ruby/Statistique_inf%C3%A9rentielle_avec_Python
+    return variance(tableau)**0.5    
+    
     
 # dPivot = getDictEpoch()
 nbrGll = nbrRmc = nbrRmcUsed = nbrGllAndRmc = 0
@@ -583,9 +607,9 @@ epTmp = tsTmp = dtDeciTmp = 0
 
 ## dPosiRefs[<tag de position>] = 1ere ligne, derniere ligne, nbr de lignes, --, --, LatMin, LonMin, LatMax, LonMax, nbr decimales position
 dPosiRefs = dict()
-dPosiRefs['GPRMC'] = [None, None, 0, None, None, 0.0, 0.0, 0.0, 0.0, 0]
-dPosiRefs['ECRMC'] = [None, None, 0, None, None, 0.0, 0.0, 0.0, 0.0, 0]
-dPosiRefs['IIGLL'] = [None, None, 0, None, None, 0.0, 0.0, 0.0, 0.0, 0]
+# dPosiRefs['GPRMC'] = [None, None, 0, None, None, 0.0, 0.0, 0.0, 0.0, 0]
+# dPosiRefs['ECRMC'] = [None, None, 0, None, None, 0.0, 0.0, 0.0, 0.0, 0]
+# dPosiRefs['IIGLL'] = [None, None, 0, None, None, 0.0, 0.0, 0.0, 0.0, 0]
 dPosiRefs['GPRMC'] = [None, None, 0, None, None, None, None]
 dPosiRefs['ECRMC'] = [None, None, 0, None, None, None, None]
 dPosiRefs['IIGLL'] = [None, None, 0, None, None, None, None]

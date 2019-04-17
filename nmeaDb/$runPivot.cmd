@@ -26,26 +26,11 @@
 @rem nmeaDB_ExamineDateheureRmcZda.py
 @rem nmeaDB_RotateNmeaFile.py
 @rem 
-
-REM pushd %appHome%\datas
-REM for %%f in (*.nmea) do echo %%f
-REM popd
-
-REM pause
-
 %pyBin% ^
-	%appHome%\nmeaDB_verifNmeaFile.py ^
+	%appHome%\nmeaDB_RotateNmeaFile.py ^
 	%appHome%\datas\%nmeaFile% ^
-	IIZDA ^
 	GPRMC ^
+	IIGLL ^
 	1> %appHome%\%nmeaFile%.infos ^
 	2> %appHome%\%nmeaFile%.log
-
-
-
-@rem pushd %appHome%\datas
-@rem for %%f in (*.nmea) do %pyBin% %appHome%\nmeaDB_verifNmeaFile.py %appHome%\datas\%%f IIZDA 1> %appHome%\doc_dev\%%f.infos 2> %appHome%\%%f.log
-@rem popd
-
-
 	
