@@ -234,7 +234,7 @@ def getDictEpoch() :
     dPivot['RMCtmg'] = list() #0.0
     # dPivot['RTE'] = None
     # dPivot['TXT'] = None
-    dPivot['IIVHW'] = list()
+    dPivot['IIVHWsow'] = list()
     dPivot['IIVLW'] = list() #0.0
     dPivot['IIVLWtotal'] = list() #0.0
     # dPivot['IIVTG'] = list()
@@ -407,7 +407,7 @@ def xtrInfos(candidat, line, dP) :
         return candidat + " = " + line
 
     if (candidat == 'IIVHW') :
-        dP['IIVHW'].append(float(lTmp[5]))
+        dP['IIVHWsow'].append(float(lTmp[5]))
         return candidat + " = " + lTmp[5] + " dans " + line
     if (candidat == 'IIVLW') :
         dP['IIVLW'].append(float(lTmp[3]))
@@ -476,7 +476,7 @@ def xtrInfos(candidat, line, dP) :
         # $GPRMC,091930.00,A,4728.86549,N,00232.55440,W,5.248,201.64,010618,,,D*73
         ##  Info de nav, vont dans le dict() general
         if (lTmp[7] != "") :
-            dP['RMCsog'].append(lTmp[7])
+            dP['RMCsog'].append(round(float(lTmp[7]), 3))
         if (lTmp[8] != "") :
             dP['RMCtmg'].append(lTmp[8])#round(float(lTmp[8]), 0)
         ##  TODO

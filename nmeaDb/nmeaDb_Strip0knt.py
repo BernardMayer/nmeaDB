@@ -62,4 +62,42 @@ else :
 dJson = dict()
 with open(nmeaFilename, "r") as fJson:
     dJson = json.load(fJson)   
-print(dJson)
+# print(dJson)
+# print(len(dJson['datas']))
+
+##  Fabriquer une liste des epochs, pour parcourir le dict a rebours
+lEpochs = list()
+for ep in dJson['datas'] :
+    # print(ep)
+    lEpochs.append(ep)
+
+##  Combien de valeurs de deplacement a zero ?
+nZeroAvant = nZeroApres = 9
+nZero = 0
+
+##  Quelles variables contiennent du deplacement ?
+## RMCsog, IIVHWsow
+temoin = "IIVHWsow"
+RMCsog = RMCsog = 0
+ep2Del = None
+for i, ep in enumerate(lEpochs) :
+    if (decimal.Decimal(dJson['datas'][ep][temoin]) > 0.0) :
+        nZero = 0
+        ep2Del = "FinDeAvant"
+        ##  On peut sortir de la boucle,
+        ##  si on decide qu'une seule valeur > 0 est suffisament symptomatique
+        ##  pas sur si on se base sur RMC ...
+        ##  quid des bateaux a l'arret dans du courant ?
+    else :
+        nZero += 1
+    if (i < nZeroAvant) :
+        continue
+    if (nZero >= nZeroAvant and ep2Del != "FinDeAvant") :
+        # bingo !
+        ep2Del = lEpochs[i - nZeroAvant] # i - nZeroAvant
+        del dJson['datas'][ep2Del]
+    print("i =", i, ", ep =", ep, ", sow =", dJson['datas'][ep][temoin], ", nZero =", nZero, ", ep2Del =", ep2Del)
+        
+# print(len(dJson['datas']))
+
+#lEpochs.reverse()
