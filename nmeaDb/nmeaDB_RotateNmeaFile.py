@@ -478,7 +478,7 @@ def xtrInfos(candidat, line, dP) :
         if (lTmp[7] != "") :
             dP['RMCsog'].append(round(float(lTmp[7]), 3))
         if (lTmp[8] != "") :
-            dP['RMCtmg'].append(lTmp[8])#round(float(lTmp[8]), 0)
+            dP['RMCtmg'].append(round(float(lTmp[8]), 0))#round(float(lTmp[8]), 0)
         ##  TODO
         """        
         $GPRMC,193428,A,4729.9205,N,00222.6770,W,0.0,143.5,200917,2.9,W,D*1C
