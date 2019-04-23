@@ -210,6 +210,7 @@ def getDictEpoch() :
     # dPivot['GBS'] = None
     # dPivot['GGA'] = None
     # dPivot['IIGLL'] = list() #""
+    dPivot['IIGLLlatlon'] = list()
     dPivot['IIGLLlatNum'] = list() #0.0
     dPivot['IIGLLlonNum'] = list() #0.0
     # dPivot['GSA'] = None
@@ -219,11 +220,12 @@ def getDictEpoch() :
     dPivot['IIMTA'] = list() #0.0
     dPivot['IIMTW'] = list() #0.0
     # dPivot['MWD'] = None
-    dPivot['IIMWDtws'] = list() #0.0
+    # dPivot['IIMWDtws'] = list() #0.0
     dPivot['IIMWDtwd'] = list() #0.0
     # dPivot['MWV'] = None
-    # dPivot['ECRMB'] = None
-    # dPivot['GPRMB'] = None
+    dPivot['ECRMB'] = list()
+    dPivot['GPRMB'] = list()
+    dPivot['IIRMB'] = list()
     # dPivot['RMC'] = None
     dPivot['RMCep'] = list() #0.0
     dPivot['RMCts'] = list() #0.0
@@ -238,6 +240,8 @@ def getDictEpoch() :
     dPivot['IIVLW'] = list() #0.0
     dPivot['IIVLWtotal'] = list() #0.0
     # dPivot['IIVTG'] = list()
+    dPivot['IIVTGsog'] = list()
+    dPivot['IIVTGtmg'] = list()
     # dPivot['VWR'] = None
     dPivot['IIVWRrl'] = list() #""
     dPivot['IIVWRawa'] = list() #0.0
@@ -247,10 +251,10 @@ def getDictEpoch() :
     dPivot['IIVWTtwa'] = list() #0.0
     dPivot['IIVWTtws'] = list() #0.0
     # dPivot['WPL'] = None
+    dPivot['IIXTE'] = list()
     # dPivot['IIZDA'] = list()
-    dPivot['ZDAep'] = list()
-    dPivot['ZDAts'] = list()
-    # dPivot[''] = None
+    dPivot['IIZDAep'] = list()
+    dPivot['IIZDAts'] = list()
     # dPivot[''] = None
     # dPivot[''] = None
     # dPivot[''] = None
@@ -394,16 +398,16 @@ def xtrInfos(candidat, line, dP) :
     
     # 
     if (candidat == 'ECAPB' and lTmp[1] == 'A' and lTmp[2] == 'A') :
-        dp['ECAPB'].append(line)
+        dP['ECAPB'].append(line)
         return candidat + " = " + line 
     if (candidat == 'GPAPB' and lTmp[1] == 'A' and lTmp[2] == 'A') :
-        dp['GPAPB'].append(line)
+        dP['GPAPB'].append(line)
         return candidat + " = " + line
     if (candidat == 'ECRMB' and lTmp[1] == 'A') :
-        dp['ECRMB'].append(line)
+        dP['ECRMB'].append(line)
         return candidat + " = " + line
     if (candidat == 'GPRMB' and lTmp[1] == 'A') :
-        dp['GPRMB'].append(line)
+        dP['GPRMB'].append(line)
         return candidat + " = " + line
 
     if (candidat == 'IIVHW') :
@@ -429,7 +433,7 @@ def xtrInfos(candidat, line, dP) :
         return candidat + " IIVWRawa = " + str(dP['IIVWRawa']) + " VWRrl = " + lTmp[2] + " VWRaws = " + lTmp[3] + " dans " + line
     if (candidat == 'IIMWD') :
         dP['IIMWDtwd'].append(float(lTmp[3]))
-        dP['IIMWDtws'].append(float(lTmp[5]))
+        # dP['IIMWDtws'].append(float(lTmp[5]))
         return candidat + " IIMWDtwd = " + lTmp[3] + " IIMWDtws = " + lTmp[5] + " dans " + line
     if (candidat == 'IIVWT') :
         dP['IIVWTrl'].append(lTmp[2])
@@ -468,7 +472,14 @@ def xtrInfos(candidat, line, dP) :
         return candidat + " = pas necessaire car HDM present"
     if (candidat == 'IIVTG') :
         # $IIVTG,046.,T,,M,03.5,N,06.5,K,A*2D
-        return candidat + " = pas necessaire"
+        if (type(lTmp[1]) == 'int') :
+            dP['IIVTGsog'].append(int(lTmp[1]))
+        elif (type(lTmp[1]) == 'str') :
+            # 000. 0.0 
+            dP['IIVTGsog'].append(int(lTmp[1].split(".")[0]))
+        dP['IIVTGtmg'].append(float(lTmp[5]))
+        # return candidat + " = pas necessaire"
+        return candidat + " dans " + line
     if (candidat == 'IIDPT') :
         # $IIDPT,0001.9,,*7A
         return candidat + " = pas necessaire"
@@ -527,7 +538,7 @@ def xtrInfos(candidat, line, dP) :
         # $IIVTG,046.,T,,M,03.5,N,06.5,K,A*2D
         return candidat + " = pas necessaire"
     if (candidat == 'IIZDA') :
-        (dP['ZDAep'], dP['ZDAts']) = getEpochFromIIZDA(line)
+        (dP['IIZDAep'], dP['IIZDAts']) = getEpochFromIIZDA(line)
         return candidat + TAB + line
     return None
 
@@ -551,7 +562,7 @@ def getEpochFromIIZDA(line) :
     ts = float(lTmp[4] + lTmp[3] + lTmp[2] + lTmp[1][0:2] + lTmp[1][2:4] + lTmp[1][4:6] + ".0")
     dt = datetime.datetime(int(lTmp[4]), int(lTmp[3]), int(lTmp[2]), int(lTmp[1][0:2]), int(lTmp[1][2:4]), int(lTmp[1][4:6]))
     ep = (dt - dt1970).total_seconds() + 0.0
-    print("ZDA [", line, "] ts", ts, "    ep", ep, file=sys.stderr)
+    print("IIZDA [", line, "] ts", ts, "    ep", ep, file=sys.stderr)
     return (ep, ts)
 
 def getPosiFromGPRMC(line) :
