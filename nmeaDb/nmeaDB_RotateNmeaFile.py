@@ -46,7 +46,7 @@ import decimal
 decimal.getcontext().prec = 2
 TAB = '\t'
 FileOutSep = TAB
-FileOutHeader = False
+FileOutHeader = True
 Verbose = True
 #dIni['verbose'] = Verbose
 dtNow  = datetime.datetime.today()
@@ -57,6 +57,44 @@ dt1970 = datetime.datetime(1970, 1, 1)
 # LatLonPrefered = "RMC"
 LatLonPrefered = "GLL"
 
+lHeaders = list()
+lHeaders.append("nLine")
+lHeaders.append("ts")
+lHeaders.append("ECAPB")
+lHeaders.append("GPAPB")
+lHeaders.append("IIDBT")
+lHeaders.append("IIHDM")
+lHeaders.append("IIGLLlatlon")
+lHeaders.append("IIGLLlatNum")
+lHeaders.append("IIGLLlonNum")
+lHeaders.append("IIMTA")
+lHeaders.append("IIMTW")
+lHeaders.append("IIMWDtwd")
+lHeaders.append("ECRMB")
+lHeaders.append("GPRMB")
+lHeaders.append("IIRMB")
+lHeaders.append("RMCep")
+lHeaders.append("RMCts")
+lHeaders.append("RMClatlon")
+lHeaders.append("RMClatNum")
+lHeaders.append("RMClonNum")
+lHeaders.append("RMCsog")
+lHeaders.append("RMCtmg")
+lHeaders.append("IIVHWsow")
+lHeaders.append("IIVLW")
+lHeaders.append("IIVLWtotal")
+lHeaders.append("IIVTGsog")
+lHeaders.append("IIVTGtmg")
+lHeaders.append("IIVWRrl")
+lHeaders.append("IIVWRawa")
+lHeaders.append("IIVWRaws")
+lHeaders.append("IIVWTrl")
+lHeaders.append("IIVWTtwa")
+lHeaders.append("IIVWTtws")
+lHeaders.append("IIXTE")
+lHeaders.append("IIZDAep")
+lHeaders.append("IIZDAts")
+# lHeaders.append("")
 
 #bShowIdentifier = os.getenv("dsXidentifier", False)
 
@@ -710,7 +748,19 @@ for k in dPivotsSorted :
         if (type(dPivotsSorted[k][tag]) == list and len(dPivotsSorted[k][tag]) > 0) :
             dPivotsSorted[k][tag] = mediane(dPivotsSorted[k][tag])
     # print(dPivotsSorted[k])
-        
+
+##  Export CSV
+fCsv = open(nmeaFilename + ".csv", 'w')
+if (FileOutHeader) :
+    fCsv.write(FileOutSep.join(lHeaders))
+    fCsv.write("\n")
+for ep in dPivotsSorted :
+    for h in lHeaders :
+        fCsv.write(str(dPivotsSorted[ep][h]) + FileOutSep)
+    fCsv.write("\n")
+fCsv.close()    
+    
+##  Export JSON    
 dJson = dict()
 dJson['name'] = basename
 dJson['check'] = fileCheck
