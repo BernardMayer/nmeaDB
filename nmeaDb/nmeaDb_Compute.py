@@ -218,7 +218,7 @@ def getDictCompute() :
 ##  Cela implique un deplacement. En consequence, une vitesse minimale est requise
 referenceCap = "IIHDM" # IIHDM RMCtmg
 referenceVitesse = "IIVHWsow" # RMCsog IIVHWsow 
-vitesseMini = 2
+vitesseMini = 3
 
 me = sys.argv[0]
 #args = sys.argv[1:]
@@ -259,26 +259,31 @@ for cap10 in range(0, 359, 10) :
     dTmgList[cap10] = list()
     dDiffHdmTmg[cap10] = list()
     dHdmTmg[cap10] = dict()
-
 for ep in dJson['datas'] :
-    if (dJson['datas'][ep][referenceVitesse] < vitesseMini) :
+    if (dJson['datas'][ep][referenceVitesse]) :
+        # vitesse = moyenne(dJson['datas'][ep][referenceVitesse])
+        if (dJson['datas'][ep][referenceVitesse] < vitesseMini) :
+            continue
+    else :
         continue
-    if (dJson['datas'][ep][referenceCap]) :
+    if (dJson['datas'][ep]['IIHDM'] and dJson['datas'][ep]['IIVTGtmg']) :
         ##  cap10 est la partie dizaine de la valeur 359.7 --> 350 ; 45.1 --> 40 ; 7.3 --> 0
         # int pour supprimer la partie decimale, ouis str pour supprimer le dernier chiffre et le remplacer par 0, puis de nouveau int
-        cap10 = int(str(int(dJson['datas'][ep][referenceCap]))[0:-1] + "0")
+        cap10 = int(str(int(dJson['datas'][ep]['IIHDM']))[0:-1] + "0")
     else :
         continue
     # print("cap10 =", cap10, "\t\t\t", dJson['datas'][ep][referenceCap])
     hdm = int(dJson['datas'][ep]['IIHDM'])
-    tmg = int(dJson['datas'][ep]['RMCtmg'])
+    tmg = int(dJson['datas'][ep]['IIVTGtmg'])
     dHdmList[cap10].append(hdm)
     dTmgList[cap10].append(tmg)
     dDiffHdmTmg[cap10].append(hdm - tmg)
-
-print(dHdmList)
-print(dTmgList)
-print(dDiffHdmTmg)
+    if (abs(hdm - tmg) > 10) :
+        print(ep, "HDM :", dJson['datas'][ep]['IIHDM'], ", IIVTGtmg :", dJson['datas'][ep]['IIVTGtmg'])
+for cap10 in range(0, 359, 10) : 
+    print(cap10, dHdmList[cap10])
+    print(cap10, dTmgList[cap10])
+    print(cap10, dDiffHdmTmg[cap10])
 
 quit()
     
