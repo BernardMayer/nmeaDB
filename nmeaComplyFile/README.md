@@ -4,7 +4,9 @@ title: Conformer le format du fichier log NMEA
 
 
 Afin de traiter correctement les fichiers de collecte NMEA, il convient de les conformer.
-Un fichier brut comprend un phrase NMEA par ligne
+
+Fichier brut, une phrase NMEA par ligne
+---------------------------------------
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !AIVDO,1,1,,,B3HvFrP007v@>06hO6p03wR5sP06,0*20
 $GPRMC,192907.00,A,4714.34053,N,00131.57102,W,0.045,90.94,030418,,,A*46
@@ -13,6 +15,7 @@ $GPGBS,192911.00,4.8,4.4,6.8,,,,*40
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 NKE
+---
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ==> Box WiFi V2.1  Start logging
  0.422 $PNKEV,Box WiFi nke 3,V2.1,Aug 23 2017,17:04:14,00.1E.C0.39.41.44,V1.0*04
@@ -45,9 +48,8 @@ NKE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 La norme NMEA-0183v4 TAG (kplex et read183)
-
+-------------------------------------------
 [http://www.nmea.org/Assets/may%2009%20rtcm%200183_v400.pdf](http://www.nmea.org/Assets/may%2009%20rtcm%200183_v400.pdf)
-
 [https://groups.google.com/forum/\#!forum/kplex](https://groups.google.com/forum/#!forum/kplex)
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
