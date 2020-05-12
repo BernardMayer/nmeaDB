@@ -1,0 +1,34 @@
+lire les parametres :
+-i <fichier> nom du fichier en entree (stdin par defaut) 
+-o <fichier> nom du fichier en sortie (stdout par defaut)
+-f <format> [0 | NMEA | NKE] (0 par defaut)
+-t <nombre> offset (0 par defaut)
+-g prise en compte timestamp GPS (non par defaut)
+
+Si -i 
+	Test acces au fichier
+	Si echec
+		Sortir avec code erreur
+Si -o
+	Test creation
+	Si echec
+		Sortir avec code erreur
+
+Si -f
+	Le format est-il connu ?
+
+Si -<nombre>
+	Le nombre est-il plausible ?
+
+
+	
+Premiere lecture pour detecter format NMEA en entree des lignes
+	Si -g :
+		Detecter trame GPS OK, et recuperer les premieres valeurs et connaitre leur intervalle moyen
+
+Lecture ligne a ligne
+	Tant que format NMEA en entree est inconnu
+		Determiner format en entree
+	Si ligne contient NMEA
+		(TS, NMEA) suivant format entree
+		Ecrire suivant format sortie
