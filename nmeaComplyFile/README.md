@@ -1,8 +1,6 @@
 ---
 title: Conformer le format du fichier log NMEA
 ---
-==============================================
-
 
 Afin de traiter correctement les fichiers de collecte NMEA, il convient de les conformer.
 
