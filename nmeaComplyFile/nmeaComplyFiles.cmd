@@ -14,6 +14,9 @@
 @rem Fichier non conforme / sans NMEA
 @rem type nmeaComplyFile-algo.txt | python nmeaComplyFiles.py
 
+@rem Transformer du BRUT en BRUT, pour le nettoyer
+@rem python nmeaComplyFiles.py -i .\samples\Nav_20180601.nmea -o ./samples/testTransform2Brut.txt
+
 @rem Transformer du NKE en BRUT, pour pouvoir faire des polaires
 @rem type .\samples\NKE00895.LOG | python nmeaComplyFiles.py   -f BRUT -o ./samples/testNke2Brut.txt
 @rem python nmeaComplyFiles.py   -f BRUT -o ./samples/testNke2Brut.txt -i .\samples\NKE00895.LOG 
@@ -33,8 +36,31 @@
 @rem Transformer du NKE en NMEA pour pouvoir l'injecter dans qtVlm
 @rem type .\samples\NKE00895.LOG | python nmeaComplyFiles.py  -o ./samples/testTransform2Brut.txt  -f NMEA
 @rem type .\samples\NKE00895.LOG | python nmeaComplyFiles.py  -o ./samples/testTransform2Brut.txt  -f NMEA -t 1000000000
-@rem python nmeaComplyFiles.py -i .\samples\NKE00895.LOG -o ./samples/testTransform2Brut.txt  -f NMEA -t 1000000000
-type .\samples\Nav_20180601.nmea | python nmeaComplyFiles.py  -o ./samples/testTransform2Brut.txt  -f NMEA -g
+@rem python nmeaComplyFiles.py -i .\samples\NKE00895.LOG -o ./samples/testTransform2Brut.txt  -f NMEA -t 1234500000
+
+@rem Transformar du NKE en NKE, pour le nettoyer, pour modifier le TS, pour recuperer le TS du GPS
+@rem python nmeaComplyFiles.py -i .\samples\NKE00895.LOG -o ./samples/testTransform2Brut.txt  -f NKE
+@rem type .\samples\NKE00895.LOG | python nmeaComplyFiles.py -o ./samples/testTransform2Brut.txt  -f NKE
+@rem python nmeaComplyFiles.py -i .\samples\NKE00895.LOG -o ./samples/testTransform2Brut.txt  -f NKE -t 1234500000
+@rem python nmeaComplyFiles.py -i .\samples\NKE00895etGPS.LOG -o ./samples/testTransform2Brut.txt  -f NKE -g
+
+@rem Transformer du BRUT en NKE sans info, avec un TS, avec infos GPS
+@rem python nmeaComplyFiles.py -i .\samples\Nav_20180601.nmea -o ./samples/testTransform2Brut.txt -f NKE
+@rem python nmeaComplyFiles.py -i .\samples\Nav_20180601.nmea -o ./samples/testTransform2Brut.txt -f NKE -t 1234567890
+@rem python nmeaComplyFiles.py -i .\samples\Nav_20180601.nmea -o ./samples/testTransform2Brut.txt -f NKE -g
+
+@rem Transformer du NMEA en NKE, pour ... ADRENA ?
+@rem     Cas ou on ignore -t et -g ...
+@rem python nmeaComplyFiles.py -i .\samples\kplex-ms.nmea -o ./samples/testTransform2Brut.txt -f NKE
+@rem python nmeaComplyFiles.py -i .\samples\kplex-s.nmea -o ./samples/testTransform2Brut.txt -f NKE
+
+@rem Transformer du BRUT vers du NMEA
+@rem python nmeaComplyFiles.py -i .\samples\Nav_20180601.nmea -o ./samples/testTransform2Brut.txt -f NMEA
+python nmeaComplyFiles.py -i .\samples\Nav_20180601.nmea -o ./samples/testTransform2Brut.txt -f NMEA -t 1234567890
+@rem python nmeaComplyFiles.py -i .\samples\Nav_20180601.nmea -o ./samples/testTransform2Brut.txt -f NMEA -g
+
+
+@rem type .\samples\Nav_20180601.nmea | python nmeaComplyFiles.py  -o ./samples/testTransform2Brut.txt  -f NMEA -g
 
 
 @rem OU addition offset   OU recuperer le TS depuis trace GPS

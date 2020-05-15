@@ -352,10 +352,79 @@ def transformeEnNke(l, nmeaType) :
     #268.729 $IIMWV,167,R,8.2,N,A*29
     if (not quelTypeDeLigne(l) == nmeaType) :
         return False
-    ##  Quel traitement si format nmeaType == BRUT ?
-    global ts
+    global epoch
     
-    return l
+    if (nmeaType == 'NKE') :
+        if (not fileOffset and not fileGps) : 
+            return l
+        (secms, nmea) = l.lstrip().split("$")
+        nmea = "$" + nmea
+        secms = secms.strip()
+        (ts, ms) = secms.split(".")
+        if (not fileGps) :
+            ##  On ajoute l'offset
+            ret = str(long(ts) + long(fileOffset))
+        else : 
+            ##  On recupere l'info GPS
+            ep = estNmeaTemporelle(l)
+            if (ep > epoch) :
+                epoch = ep
+            if (epoch > long(ts)) :
+                ret = str(epoch)
+                ##  Quand il n'y a pas d'infos GPS pendant plus d'une seconde, les ms sont incohérentes
+                ms = "000"
+            else :
+                ret = ts
+        ## Conserver la bizzarerie de l'espace au debut des premiers timestamp..
+        if (len(ret) == 1) :
+            ret = " " + ret
+        return ret + "." + ms + " " + nmea
+            
+    if (nmeaType == 'BRUT') : 
+        if (not fileOffset and not fileGps) : 
+            return  " 0.000 " + l
+        elif (fileOffset > 0) :
+            ret = str(fileOffset)
+            if (ret.find(".") > -1) :
+                (ts, ms) = ret.split(".")
+            else :    
+                ts = ret
+                ms = "000"
+            if (len(ts) == 1) :
+                ts = " " + ts
+            return ts + "." + ms + " " + l    
+        else :
+            ##  On recupere l'info GPS
+            ep = estNmeaTemporelle(l)
+            if (ep > epoch) :
+                epoch = ep
+            if (epoch > 0) :
+                ret = str(epoch)
+            else :
+                ret = "0"
+            ## Conserver la bizzarerie de l'espace au debut des premiers timestamp..
+            if (len(ret) == 1) :
+                ret = " " + ret
+            return ret + ".000 " + l
+
+    if (nmeaType == 'NMEA') : 
+        ##  On ignore -t et -g
+        (pre, nmea) = l.split("$")
+        posTs = pre.find("\\c:")
+        pre = pre[posTs + 3:]
+        ts = pre[:pre.find("*")]
+        ## un TS de longueur > 10 est en ms, 
+        ## car une longueur de 10 (TS = 9999999999) en sec nous emmene jusqu'au 2020-5-15
+        if (len(ts) > 10) :
+            ##  TS en millisecondes
+            ts = ts[:-3] + "." + ts[-3:]
+        else :
+            ts = ts + ".000"
+        return ts + " " + nmea    
+
+
+    
+    return "?"
     
     
     
